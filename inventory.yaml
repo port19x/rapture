@@ -1,0 +1,4 @@
+virtualmachines:
+  hosts:
+    rapturev1:
+      ansible_hosts: 64.226.72.174

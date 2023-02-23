@@ -1,0 +1,141 @@
+#+title: Rapture Admin Notes
+#+author: port19
+#+description: Not to be confused for some tutorial series. The usefulness of this document (to others) is accidental at best.
+
+* Day 1 <2023-02-23 Thu>
+
+** VPS provider
+
+I first opened a vultr account, but didn't recieve the 100$ free credit as anticipated.
+The 2.50$ VPS is also a lot more limited than the 4$ VPS on digital ocean.
+Luckily, my paypal chargeback worked and I was able to get the account balance I loaded on there back.
+I also watched the following yt video about [[https://youtu.be/-DiPiYEBUHQ][linode vs digital ocean vs vultr]]
+I then settled on digital ocean, due to the 200 USD 60day trial, user interface and overall superiority.
+
+** Spinning up the first pod
+
+I successfully set up my first pod in a couple minutes.
+I configured it to use an ssh key for authentication.
+The operating system of choice will be debian 11.
+I sshed into it after like 2 minutes.
+I then configured ssh on my host machine, notably adding 3 loc to my sshconfig under ~/.ssh/config
+#+begin_src
+Host *IPv4*
+  IdentityFile ~/.ssh/digital-ocean
+  PreferredAuthentications publickey
+#+end_src
+/(Note "\*IPv4\*" is substituted with the actual IP of my vps)/
+
+** Installing Ansible
+
+I installed ansible from the standard arch linux repositories.
+I added the host to my inventory.
+#+begin_src
+[rapturev1]
+*IPv4*
+#+end_src
+
+I then did an ~ansible -u root all -m ping~ which indicated success. In fancy color even :smile:
+
+** Github Repo
+
+I also initialized the github repo and started these notes.
+I plan to sync any relevant files here in this repo.
+The repo is private for now, as it's gonna be pretty boring initially.
+I don't wanna just publish a repo with nothing cool in it, right?
+
+** Hardening ssh & disableing root
+
+ssh over root is a bad idea.
+Even with a key file.
+Might as well harden it a little.
+Root on it's own is a bad idea as well, I'll fix that too while I'm at it.
+
+On my vps:
+- Added a user "jack" that is in the sudo group
+  ~useradd -G sudo jack~
+  /(there will be more bioshock references as we go)/
+- Made jack require no password to use sudo
+  1. ~EDITOR=vim visudo~
+  2. then added the line ~Defaults:jack !authenticate~
+- While editing the ssh config ~sudo vim /etc/ssh/sshd_config~
+- disabled root ssh login
+- changed ssh port to 2076
+
+On my machine I changed my ssh config accordingly
+#+begin_src
+Host *IPv4*
+  IdentityFile ~/.ssh/digital-ocean
+  PreferredAuthentications publickey
+  User jack
+  Port 2076
+#+end_src
+
+This broke my access!
+Also that other user had raw dash as his shell and ~chsh~ didn't seem to work.
+
+** Recovering
+
+Time to rebuild the droplet.
+Thankfully digital ocean offers a way to recreate a droplet with the same parameters.
+
+This time no disableing root and no new user!
+Just change the port!
+And then pray it works with ansible still.
+
+Changed the port through editing ~/etc/ssh/sshd_config~ on the vps
+Then some ~systemctl daemon-reload~ and ~systemctl restart sshd~
+Changed the config on my machine
+
+#+begin_src
+Host *IPv4*
+  IdentityFile ~/.ssh/digital-ocean
+  PreferredAuthentications publickey
+  User root
+  Port 2076
+#+end_src
+
+~ansible all -m ping~ ran successfully
+** Package updates
+Just a quick ~sudo apt update && sudo apt upgrade~
+** Building the inventory
+
+Within the repo I now create a version controllable inventory file "inventory.yaml"
+This kinda broke things for a second because of a misconception on my part on what the ssh config calls a host.
+#+begin_src
+Host rapturev1
+  Hostname 64.226.72.174
+  IdentityFile ~/.ssh/digital-ocean
+  PreferredAuthentications publickey
+  User root
+  Port 2076
+#+end_src
+With this ssh config it worked with my basic 1 host inventory
+#+begin_src
+virtualmachines:
+  hosts:
+    rapturev1:
+      ansible_hosts: 64.226.72.174
+#+end_src
+
+** First playbook
+
+Still following along with the official getting started docs I created the reference playbook
+#+begin_src
+- name: My first play
+  hosts: virtualmachines
+  tasks:
+   - name: Ping my hosts
+     ansible.builtin.ping:
+   - name: Print message
+     ansible.builtin.debug:
+       msg: Hello world
+#+end_src
+
+Which worked first try with the provided command ~ansible-playbook -i inventory.yaml playbook.yaml~
+
+** Enough for today
+
+This covers about the whole ansible getting started docs, with the [[https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_intro.html#about-playbooks][Playbook docs]] being a good next step.
+
+Time to commit and push all this new stuff :blush:
