@@ -1,8 +1,9 @@
 - name: My first play
-  hosts: virtualmachines
+  hosts: digitalocean
   tasks:
    - name: Ping my hosts
      ansible.builtin.ping:
+   - import_tasks: tasks/essential.yaml
    - name: Print message
      ansible.builtin.debug:
        msg: Hello world

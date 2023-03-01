@@ -139,3 +139,13 @@ Which worked first try with the provided command ~ansible-playbook -i inventory.
 This covers about the whole ansible getting started docs, with the [[https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_intro.html#about-playbooks][Playbook docs]] being a good next step.
 
 Time to commit and push all this new stuff :blush:
+
+* Day 2 <2023-03-01 Wed>
+
+** Follow Video from Wolfgangs channel
+** Made ansible.cfg to have repo local inventory
+** Renamed inventory "virtualmachines" -> "digitalocean"
+** Set up ansible support within doom emacs
+** Set the bunny as default cowsay character
+** Add simple task and add it to the playbook
+** Add simple group_vars/all file
