@@ -162,3 +162,7 @@ Time to commit and push all this new stuff :blush:
 - installed it
 - applied some fixes
 - set up github action
+** Readme
+Making stuff slightly more usefull with action badges and my favorite picture of rapture
+** Demodularize
+It's not very sensible to have many small tasks in some niche folder when I can just have everything in one large playbook

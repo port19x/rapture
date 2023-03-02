@@ -4,8 +4,15 @@
   tasks:
    - name: Ping my hosts
      ping:
-   - name: Update and install vim
-     import_tasks: tasks/essential.yaml
+   - name: Update packages
+     apt:
+      update_cache: true
+      upgrade: true
+   - name: Install essential packages
+     package:
+      name:
+       - vim
+      state: latest
    - name: Print message
      debug:
       msg: Hello world
