@@ -1,9 +1,11 @@
+---
 - name: My first play
   hosts: digitalocean
   tasks:
    - name: Ping my hosts
-     ansible.builtin.ping:
-   - import_tasks: tasks/essential.yaml
+     ping:
+   - name: Update and install vim
+     import_tasks: tasks/essential.yaml
    - name: Print message
-     ansible.builtin.debug:
-       msg: Hello world
+     debug:
+      msg: Hello world
