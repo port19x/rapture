@@ -1,18 +1,62 @@
 ---
-- name: My first play
+- name: Initial Setup
   hosts: digitalocean
+  vars:
+    created_username: jack
+
+  pre_tasks:
+    - name: Ping my hosts
+      ping:
+
   tasks:
-   - name: Ping my hosts
-     ping:
-   - name: Update packages
-     apt:
-      update_cache: true
-      upgrade: true
-   - name: Install essential packages
-     package:
-      name:
-       - vim
-      state: latest
-   - name: Print message
-     debug:
-      msg: Hello world
+    - name: Setup passwordless sudo
+      lineinfile:
+        path: /etc/sudoers
+        state: present
+        regexp: '^%sudo'
+        line: '%sudo ALL=(ALL) NOPASSWD: ALL'
+        validate: '/usr/sbin/visudo -cf %s'
+
+    - name: Create a new regular user with sudo privileges
+      user:
+        name: "{{ created_username }}"
+        state: present
+        groups: sudo
+        append: true
+
+    - name: Set authorized key for remote user
+      ansible.posix.authorized_key:
+        user: "{{ created_username }}"
+        state: present
+        key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/digital-ocean.pub') }}"
+
+    - name: Disable password authentication for root
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        state: present
+        regexp: '^#?PermitRootLogin'
+        line: 'PermitRootLogin prohibit-password'
+
+    - name: Install and update packages
+      apt:
+        name:
+          - vim
+          - ufw
+        state: latest
+        autoremove: true
+        update_cache: true
+
+    - name: UFW - Allow SSH connections
+      community.general.ufw:
+        rule: allow
+        name: OpenSSH
+
+    - name: UFW - Enable and deny by default
+      community.general.ufw:
+        state: enabled
+        default: deny
+
+  post_tasks:
+    - name: Print message
+      debug:
+        msg: Finished Initial Setup
