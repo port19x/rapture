@@ -1,12 +1,9 @@
 ---
-- name: Initial Setup
+- name: Ensure jack user and ssh hardening
+  remote_user: root
   hosts: digitalocean
   vars:
     created_username: jack
-
-  pre_tasks:
-    - name: Ping my hosts
-      ping:
 
   tasks:
     - name: Setup passwordless sudo
@@ -21,8 +18,8 @@
       user:
         name: "{{ created_username }}"
         state: present
-        groups: sudo
-        append: true
+        groups:
+          - sudo
 
     - name: Set authorized key for remote user
       ansible.posix.authorized_key:
@@ -37,7 +34,13 @@
         regexp: '^#?PermitRootLogin'
         line: 'PermitRootLogin prohibit-password'
 
+- name: Update packages and firewall
+  remote_user: jack
+  hosts: digitalocean
+
+  tasks:
     - name: Install and update packages
+      become: true
       apt:
         name:
           - vim
@@ -47,16 +50,13 @@
         update_cache: true
 
     - name: UFW - Allow SSH connections
+      become: true
       community.general.ufw:
         rule: allow
         name: OpenSSH
 
     - name: UFW - Enable and deny by default
+      become: true
       community.general.ufw:
         state: enabled
         default: deny
-
-  post_tasks:
-    - name: Print message
-      debug:
-        msg: Finished Initial Setup

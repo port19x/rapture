@@ -167,3 +167,5 @@ Making stuff slightly more usefull with action badges and my favorite picture of
 ** Demodularize
 It's not very sensible to have many small tasks in some niche folder when I can just have everything in one large playbook
 ** Follow digital ocean guide
+** Rebuild droplet because of ssh lockout
+** Split playbook into two plays, user + ssh setup as root and then updates and firewalling as jack.
