@@ -149,3 +149,16 @@ Time to commit and push all this new stuff :blush:
 ** Set the bunny as default cowsay character
 ** Add simple task and add it to the playbook
 ** Add simple group_vars/all file
+
+* Day 3 <2023-03-02 Thu>
+
+** Linter Stack
+*** Ansible Lint
+- installed it
+- applied some fixes
+- ignore "fqcn-builtins" and "403" via .ansible_lint file
+- set up github action
+*** Yaml Lint
+- installed it
+- applied some fixes
+- set up github action
