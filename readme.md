@@ -1,7 +1,6 @@
 # Rapture
 
 [![Ansible Lint](https://github.com/port19x/rapture/actions/workflows/ansible-lint.yml/badge.svg)](https://github.com/port19x/rapture/actions/workflows/ansible-lint.yml)
-[![Yaml Lint](https://github.com/port19x/rapture/actions/workflows/yaml-lint.yml/badge.svg)](https://github.com/port19x/rapture/actions/workflows/yaml-lint.yml)
 
 The ansible playbook for my VPS
 
