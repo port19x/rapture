@@ -1,0 +1,20 @@
+---
+- hosts: localhost
+  name: Cleanup
+  vars:
+    oauth_token: "{{ lookup('ansible.builtin.file', 'token') }}"
+  tasks:
+    - name: Destroy Droplet
+      community.digitalocean.digital_ocean_droplet:
+        state: absent
+        oauth_token: "{{ oauth_token }}"
+        name: rapturev2
+        unique_name: true
+    - name: Retrieve DigitalOcean Customer Balance
+      community.digitalocean.digital_ocean_balance_info:
+        oauth_token: "{{ oauth_token }}"
+      register: balance
+    - name: Display balance
+      ansible.builtin.debug:
+        msg: |
+          Total|MTD: {{ balance.data.account_balance }}|{{ balance.data.month_to_date_usage }}

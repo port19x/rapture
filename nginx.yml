@@ -1,0 +1,13 @@
+- hosts: digitalocean
+  name: Configuration
+  become: true
+  tasks:
+
+    - name: "Apt-get update"
+      apt:
+        update_cache: true
+
+    - name: "Install nginx"
+      apt:
+        name: ['nginx', 'ssl-cert']
+        state: latest

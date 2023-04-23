@@ -1,0 +1,36 @@
+---
+- hosts: localhost
+  name: Deployment
+  vars:
+    oauth_token: "{{ lookup('ansible.builtin.file', 'token') }}"
+  tasks:
+    - name: "Register SSH Public Key"
+      community.digitalocean.digital_ocean_sshkey:
+        name: "Github Token"
+        oauth_token: "{{ oauth_token }}"
+        ssh_pub_key: "{{ lookup('ansible.builtin.file', '~/.ssh/github.pub') }}"
+        state: present
+      register: sshkey_result
+
+    - name: "Create Droplet"
+      community.digitalocean.digital_ocean_droplet:
+        state: present
+        oauth_token: "{{ oauth_token }}"
+        name: "{{ item }}"
+        size: s-1vcpu-512mb-10gb
+        region: fra1
+        image: debian-11-x64
+        unique_name: true
+        ssh_keys: ["{{ sshkey_result.data.ssh_key.id }}"]
+      with_inventory_hostnames:
+        - digitalocean
+      register: droplet_result
+
+    - name: Persist IP address in hostfile
+      become: true # Do "sudo echo hi" or sth if you get an error
+      lineinfile:
+        dest: /etc/hosts
+        regexp: '.*{{ item.data.droplet.name }}$'
+        line: "{{ item.data.droplet.networks.v4.0.ip_address }} {{ item.data.droplet.name }}"
+        state: present
+      with_items: "{{ droplet_result.results }}"
