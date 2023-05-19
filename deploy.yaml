@@ -33,14 +33,26 @@
         state: present
       with_items: "{{ droplet_result.results }}"
 
-- name: Nginx Config
-  hosts: digitalocean
-  become: true
+- name: Install NGINX
+  hosts: all
+  collections:
+    - nginxinc.nginx_core
   tasks:
-    - name: "Apt-get update"
-      apt:
-        update_cache: true
-    - name: "Install nginx"
-      apt:
-        name: ['nginx', 'ssl-cert']
-        state: latest
+    - name: Install NGINX
+      ansible.builtin.include_role:
+        name: nginx
+      vars:
+        nginx_install_from: os_repository
+
+- name: Deploy Monitoring Stack
+  hosts: all
+  become: true
+  vars:
+    loki_server: loki_server.local
+  roles:
+    - fahcsim.grafana_stack.prometheus
+    - fahcsim.grafana_stack.loki
+    - fahcsim.grafana_stack.prometheus_node_exporter
+    - fahcsim.grafana_stack.prometheus_alert_manager
+    - fahcsim.grafana_stack.promtail
+    - fahcsim.grafana_stack.grafana
