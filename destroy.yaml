@@ -8,7 +8,7 @@
       community.digitalocean.digital_ocean_droplet:
         state: absent
         oauth_token: "{{ oauth_token }}"
-        name: rapturev2
+        name: rapturev2.example.com
         unique_name: true
     - name: Retrieve DigitalOcean Customer Balance
       community.digitalocean.digital_ocean_balance_info:

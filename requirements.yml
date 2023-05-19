@@ -2,5 +2,6 @@
 collections:
   - name: ansible.posix
   - name: community.general
+  - name: community.digitalocean
   - name: nginxinc.nginx_core
   - name: fahcsim.grafana_stack
