@@ -84,8 +84,8 @@
         mode: '0644'
     - name: Copy Nginx Config
       ansible.builtin.copy:
-        src: config_files/nginx_exporter.conf
-        dest: /etc/nginx/conf.d/nginx_exporter.conf
+        src: config_files/nginx.conf
+        dest: /etc/nginx/nginx.conf
         mode: '0644'
     - name: Copy Docker Config
       ansible.builtin.copy:
@@ -111,41 +111,19 @@
         - prometheus
         - grafana-server
 
-# - name: Deploy Personal Blog
-#   hosts: all
-#   become: true
-#   vars:
-#     blog_repo: https://github.com/port19x/port19.xyz.git
-#     blog_directory: /var/www/port19.xyz
-#   tasks:
-#     - name: Clone blog repository
-#       ansible.builtin.git:
-#         repo: "{{ blog_repo }}"
-#         dest: "{{ blog_directory }}"
-#         version: gh-pages
-#         force: true
-#     - name: Configure Nginx for the blog
-#       ansible.builtin.copy:
-#         dest: /etc/nginx/sites-available/port19.xyz
-#         mode: '0644'
-#         content: |
-#           server {
-#               listen 80;
-#               server_name rapturev2.example.com; #port19.xyz
-#               root {{ blog_directory }};
-#               index index.html;
-#               location / {
-#                   try_files $uri $uri/ =404;
-#               }
-#           }
-#     - name: Enable blog site
-#       ansible.builtin.file:
-#         src: /etc/nginx/sites-available/port19.xyz
-#         dest: /etc/nginx/sites-enabled/port19.xyz
-#         state: link
-#    # - name: Obtain SSL certificate with Certbot
-#    #  ansible.builtin.command: certbot --nginx --non-interactive --agree-tos --redirect --domain port19.xyz
-#     - name: Restart Nginx
-#       ansible.builtin.service:
-#         name: nginx
-#         state: restarted
+- name: Deploy Services
+  hosts: all
+  become: true
+  tasks:
+    - name: Clone blog repository
+      ansible.builtin.git:
+        repo: https://github.com/port19x/port19.xyz.git
+        dest: /var/www/port19.xyz
+        version: gh-pages
+        force: true
+   # - name: Obtain SSL certificate with Certbot
+   #  ansible.builtin.command: certbot --nginx --non-interactive --agree-tos --redirect --domain port19.xyz
+    - name: Restart Nginx
+      ansible.builtin.service:
+        name: nginx
+        state: restarted
