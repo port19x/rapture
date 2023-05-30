@@ -70,8 +70,23 @@
           - prometheus-node-exporter
           - grafana
 
-   # - name: Copy Config Files
-   # Setup on demand later
+    - name: Enable anonymous access in Grafana
+      ansible.builtin.template:
+        src: config_files/grafana.ini
+        dest: /etc/grafana/grafana.ini
+        mode: '0644'
+
+    - name: Configure Grafana Dashboard
+      ansible.builtin.template:
+        src: config_files/dashboard.json
+        dest: /etc/grafana/provisioning/dashboards/dashboard.json
+        mode: '0644'
+
+    - name: Add Exporters to Scrape Configs
+      ansible.builtin.template:
+        src: config_files/prometheus.yml
+        dest: /etc/prometheus/prometheus.yml
+        mode: '0644'
 
     - name: Start Services
       ansible.builtin.systemd:
