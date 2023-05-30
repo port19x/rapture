@@ -1,3 +1,10 @@
+# Common Errors:
+# - Provisioning/Gathering -> `sudo echo hi`
+#   (fails with sudo: a password is required)
+# - Provisioning/Register SSH -> API token expired
+#   (fails with a 401)
+# - Configure/Gathering -> `rm ~/.ssh/known_hosts`
+#   (fails with remote host identification changed)
 ---
 - name: Provisioning
   become: true
@@ -34,19 +41,46 @@
         state: present
       with_items: "{{ droplet_result.results }}"
 
-- name: Install NGINX
-  hosts: all
-  tasks:
-    - name: Install NGINX
-      ansible.builtin.include_role:
-        name: nginxinc.nginx_core.nginx
-      vars:
-        nginx_install_from: os_repository
-
-- name: Deploy Monitoring Stack
+- name: Configure
   hosts: all
   become: true
-  roles:
-    - fahcsim.grafana_stack.prometheus
-    - fahcsim.grafana_stack.prometheus_node_exporter
-    - fahcsim.grafana_stack.grafana
+  tasks:
+    - name: Import Grafana GPG key
+      ansible.builtin.apt_key:
+        url: https://packages.grafana.com/gpg.key
+        state: present
+
+    - name: Add Grafana repo
+      ansible.builtin.apt_repository:
+        repo: deb https://packages.grafana.com/oss/deb stable main
+        state: present
+
+    - name: Install Infra Stack
+      ansible.builtin.apt:
+        pkg:
+          - nginx
+          - certbot
+          - python3-certbot-nginx
+          - git
+          - docker.io
+          - prometheus
+          - prometheus-nginx-exporter
+          - prometheus-node-exporter
+          - grafana
+
+   # - name: Copy Config Files
+   # Setup on demand later
+
+    - name: Start Services
+      ansible.builtin.systemd:
+        daemon_reload: true
+        enabled: true
+        state: started
+        name: "{{ item }}"
+      with_items:
+        - nginx
+        - docker
+        - prometheus-node-exporter
+        - prometheus-nginx-exporter
+        - prometheus
+        - grafana-server
