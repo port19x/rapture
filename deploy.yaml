@@ -8,7 +8,7 @@
 # - Configure/Gathering -> just run again
 #   (fails with UNREACHABLE)
 ---
-- name: Provisioning
+- name: Provision Digital Ocean Droplet
   become: true
   hosts: localhost
   vars:
@@ -43,21 +43,19 @@
         state: present
       with_items: "{{ droplet_result.results }}"
 
-- name: Configure
+- name: Install Infra Stack
   hosts: all
   become: true
   tasks:
-    - name: Import Grafana GPG key
+    - name: Import Grafana GPG Key
       ansible.builtin.apt_key:
         url: https://packages.grafana.com/gpg.key
         state: present
-
-    - name: Add Grafana repo
+    - name: Add Grafana Repo
       ansible.builtin.apt_repository:
         repo: deb https://packages.grafana.com/oss/deb stable main
         state: present
-
-    - name: Install Infra Stack
+    - name: Install The Packages
       ansible.builtin.apt:
         pkg:
           - nginx
@@ -70,29 +68,40 @@
           - prometheus-node-exporter
           - grafana
 
-    - name: Enable anonymous access in Grafana
-      ansible.builtin.template:
+- name: Configure Infra Stack
+  hosts: all
+  become: true
+  tasks:
+    - name: Copy Grafana Config
+      ansible.builtin.copy:
         src: config_files/grafana.ini
         dest: /etc/grafana/grafana.ini
         mode: '0644'
-
-    - name: Configure Grafana Dashboard
-      ansible.builtin.template:
-        src: config_files/dashboard.json
-        dest: /etc/grafana/provisioning/dashboards/dashboard.json
-        mode: '0644'
-
-    - name: Add Exporters to Scrape Configs
-      ansible.builtin.template:
+    - name: Copy Prometheus Config
+      ansible.builtin.copy:
         src: config_files/prometheus.yml
         dest: /etc/prometheus/prometheus.yml
         mode: '0644'
+    - name: Copy Nginx Config
+      ansible.builtin.copy:
+        src: config_files/nginx_exporter.conf
+        dest: /etc/nginx/conf.d/nginx_exporter.conf
+        mode: '0644'
+    - name: Copy Docker Config
+      ansible.builtin.copy:
+        src: config_files/docker-daemon.json
+        dest: /etc/docker/daemon.json
+        mode: '0644'
 
+- name: Start Up Infra Stack
+  hosts: all
+  become: true
+  tasks:
     - name: Start Services
       ansible.builtin.systemd:
         daemon_reload: true
         enabled: true
-        state: started
+        state: restarted
         name: "{{ item }}"
       with_items:
         - nginx
@@ -102,48 +111,41 @@
         - prometheus
         - grafana-server
 
-- name: Deploy Personal Blog
-  hosts: all
-  become: true
-
-  vars:
-    blog_repo: https://github.com/port19x/port19.xyz.git
-    blog_directory: /var/www/port19.xyz
-
-  tasks:
-    - name: Clone blog repository
-      ansible.builtin.git:
-        repo: "{{ blog_repo }}"
-        dest: "{{ blog_directory }}"
-        version: gh-pages
-        force: true
-
-    - name: Configure Nginx for the blog
-      ansible.builtin.copy:
-        dest: /etc/nginx/sites-available/port19.xyz
-        mode: '0644'
-        content: |
-          server {
-              listen 80;
-              server_name rapturev2.example.com; #port19.xyz
-              root {{ blog_directory }};
-              index index.html;
-
-              location / {
-                  try_files $uri $uri/ =404;
-              }
-          }
-
-    - name: Enable blog site
-      ansible.builtin.file:
-        src: /etc/nginx/sites-available/port19.xyz
-        dest: /etc/nginx/sites-enabled/port19.xyz
-        state: link
-
-   # - name: Obtain SSL certificate with Certbot
-   #  ansible.builtin.command: certbot --nginx --non-interactive --agree-tos --redirect --domain port19.xyz
-
-    - name: Restart Nginx
-      ansible.builtin.service:
-        name: nginx
-        state: restarted
+# - name: Deploy Personal Blog
+#   hosts: all
+#   become: true
+#   vars:
+#     blog_repo: https://github.com/port19x/port19.xyz.git
+#     blog_directory: /var/www/port19.xyz
+#   tasks:
+#     - name: Clone blog repository
+#       ansible.builtin.git:
+#         repo: "{{ blog_repo }}"
+#         dest: "{{ blog_directory }}"
+#         version: gh-pages
+#         force: true
+#     - name: Configure Nginx for the blog
+#       ansible.builtin.copy:
+#         dest: /etc/nginx/sites-available/port19.xyz
+#         mode: '0644'
+#         content: |
+#           server {
+#               listen 80;
+#               server_name rapturev2.example.com; #port19.xyz
+#               root {{ blog_directory }};
+#               index index.html;
+#               location / {
+#                   try_files $uri $uri/ =404;
+#               }
+#           }
+#     - name: Enable blog site
+#       ansible.builtin.file:
+#         src: /etc/nginx/sites-available/port19.xyz
+#         dest: /etc/nginx/sites-enabled/port19.xyz
+#         state: link
+#    # - name: Obtain SSL certificate with Certbot
+#    #  ansible.builtin.command: certbot --nginx --non-interactive --agree-tos --redirect --domain port19.xyz
+#     - name: Restart Nginx
+#       ansible.builtin.service:
+#         name: nginx
+#         state: restarted
