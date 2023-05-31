@@ -2,7 +2,7 @@
 - hosts: localhost
   name: Cleanup
   vars:
-    oauth_token: "{{ lookup('ansible.builtin.file', 'token') }}"
+    oauth_token: "{{ lookup('ansible.builtin.file', '.digital-ocean-token') }}"
   tasks:
     - name: Destroy Droplet
       community.digitalocean.digital_ocean_droplet:

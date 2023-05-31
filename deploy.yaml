@@ -64,7 +64,6 @@
           - git
           - docker.io
           - prometheus
-          - prometheus-nginx-exporter
           - prometheus-node-exporter
           - grafana
 
@@ -77,6 +76,21 @@
         src: config_files/grafana.ini
         dest: /etc/grafana/grafana.ini
         mode: '0644'
+    - name: Copy Grafana Datasource Config
+      ansible.builtin.copy:
+        src: config_files/grafana-datasources.yml
+        dest: /etc/grafana/provisioning/datasources/datasources.yml
+        mode: '0644'
+    - name: Copy Grafana Dashboard Config
+      ansible.builtin.copy:
+        src: config_files/grafana-dashboard.yml
+        dest: /etc/grafana/provisioning/dashboards/dashboard.yml
+        mode: '0644'
+    - name: Copy Grafana Dashboard
+      ansible.builtin.copy:
+        src: config_files/grafana-dashboard.json
+        dest: /etc/grafana/provisioning/dashboards/dashboard.json
+        mode: '0644'
     - name: Copy Prometheus Config
       ansible.builtin.copy:
         src: config_files/prometheus.yml
@@ -87,31 +101,8 @@
         src: config_files/nginx.conf
         dest: /etc/nginx/nginx.conf
         mode: '0644'
-    - name: Copy Docker Config
-      ansible.builtin.copy:
-        src: config_files/docker-daemon.json
-        dest: /etc/docker/daemon.json
-        mode: '0644'
 
-- name: Start Up Infra Stack
-  hosts: all
-  become: true
-  tasks:
-    - name: Start Services
-      ansible.builtin.systemd:
-        daemon_reload: true
-        enabled: true
-        state: restarted
-        name: "{{ item }}"
-      with_items:
-        - nginx
-        - docker
-        - prometheus-node-exporter
-        - prometheus-nginx-exporter
-        - prometheus
-        - grafana-server
-
-- name: Deploy Services
+- name: Deploy Blog
   hosts: all
   become: true
   tasks:
@@ -123,7 +114,20 @@
         force: true
    # - name: Obtain SSL certificate with Certbot
    #  ansible.builtin.command: certbot --nginx --non-interactive --agree-tos --redirect --domain port19.xyz
-    - name: Restart Nginx
-      ansible.builtin.service:
-        name: nginx
+
+- name: Start Up Infra Stack
+  hosts: all
+  become: true
+  tasks:
+    - name: (Re-) Start Services
+      ansible.builtin.systemd:
+        daemon_reload: true
+        enabled: true
         state: restarted
+        name: "{{ item }}"
+      with_items:
+        - nginx
+        - docker
+        - prometheus-node-exporter
+        - prometheus
+        - grafana-server
