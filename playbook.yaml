@@ -150,5 +150,5 @@
         - prometheus
         - grafana-server
     - name: Docker Compose
-      ansible.builtin.command:
-        cmd: docker-compose -f /opt/docker-compose.yml up -d
+      community.docker.docker_compose:
+        project_src: /opt
