@@ -4,4 +4,4 @@
 
 The ansible playbook for my VPS
 
-![rapture](https://github.com/port19x/rapture/assets/82055622/c0e323d6-4560-4dc4-8d55-2ad796635b85)
+![rapture](https://github.com/port19x/rapture/assets/82055622/f7e02f55-7102-44da-9d89-08c4158e8771)
