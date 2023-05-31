@@ -63,6 +63,7 @@
           - python3-certbot-nginx
           - git
           - docker.io
+          - docker-compose
           - prometheus
           - prometheus-node-exporter
           - grafana
@@ -101,6 +102,10 @@
         src: config_files/nginx.conf
         dest: /etc/nginx/nginx.conf
         mode: '0644'
+    - name: Copy Docker Compose file
+      ansible.builtin.copy:
+        src: config_files/docker-compose.yml
+        dest: /opt/docker-compose.yml
 
 - name: Deploy Blog
   hosts: all
@@ -131,3 +136,6 @@
         - prometheus-node-exporter
         - prometheus
         - grafana-server
+    - name: Docker Compose
+      ansible.builtin.command:
+        cmd: docker-compose -f /opt/docker-compose.yml up -d

@@ -1,0 +1,6 @@
+version: '3'
+services:
+  webserver:
+    image: nginx
+    ports:
+      - 40001:80
