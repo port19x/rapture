@@ -4,6 +4,6 @@
 
 The ansible playbook for my VPS
 
-![rapture](https://github.com/port19x/rapture/assets/82055622/f7e02f55-7102-44da-9d89-08c4158e8771)
+![rapture](https://github.com/port19x/rapture/assets/82055622/0c017541-7500-4aa4-8840-2d7ab059d4d6)
 
 *On hold until I evaluate supabase, vercel and others*
