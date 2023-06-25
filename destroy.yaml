@@ -14,7 +14,7 @@
       community.digitalocean.digital_ocean_domain:
         state: absent
         oauth_token: "{{ oauth_token }}"
-        name: rapture.hsnipe.moe
+        name: hsnipe.moe
         project: rapture
     - name: Retrieve DigitalOcean Customer Balance
       community.digitalocean.digital_ocean_balance_info:
