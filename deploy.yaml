@@ -53,6 +53,14 @@
         region: fra1
         droplet_id: "{{ item.data.droplet.id }}"
       with_items: "{{ droplet_result.results }}"
+    - name: Create a domain (and associate to Project "test")
+      community.digitalocean.digital_ocean_domain:
+        state: present
+        oauth_token: "{{ oauth_token }}"
+        name: rapture.hsnipe.moe
+        ip: "{{ item.data.droplet.networks.v4.0.ip_address }}"
+        project: rapture
+      with_items: "{{ droplet_result.results }}"
     - name: Persist IP address in hostfile
       become: true # Do "sudo echo hi" or sth if you get an error
       ansible.builtin.lineinfile:
