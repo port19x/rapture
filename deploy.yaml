@@ -53,7 +53,7 @@
         region: fra1
         droplet_id: "{{ item.data.droplet.id }}"
       with_items: "{{ droplet_result.results }}"
-    - name: Create a domain (and associate to Project "test")
+    - name: Create Domain
       community.digitalocean.digital_ocean_domain:
         state: present
         oauth_token: "{{ oauth_token }}"

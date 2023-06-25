@@ -10,6 +10,12 @@
         oauth_token: "{{ oauth_token }}"
         name: rapturev2.example.com
         unique_name: true
+    - name: Destroy Domain
+      community.digitalocean.digital_ocean_domain:
+        state: absent
+        oauth_token: "{{ oauth_token }}"
+        name: rapture.hsnipe.moe
+        project: rapture
     - name: Retrieve DigitalOcean Customer Balance
       community.digitalocean.digital_ocean_balance_info:
         oauth_token: "{{ oauth_token }}"
