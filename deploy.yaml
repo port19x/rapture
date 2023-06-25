@@ -14,14 +14,24 @@
   vars:
     oauth_token: "{{ lookup('ansible.builtin.file', '.digital-ocean-token') }}"
   tasks:
-    - name: "Register SSH Public Key"
+    - name: Register SSH Public Key
       community.digitalocean.digital_ocean_sshkey:
         name: "Github Token"
         oauth_token: "{{ oauth_token }}"
         ssh_pub_key: "{{ lookup('ansible.builtin.file', '~/.ssh/github.pub') }}"
         state: present
       register: sshkey_result
-    - name: "Create Droplet"
+    - name: Create Volume
+      community.digitalocean.digital_ocean_block_storage:
+        state: present
+        oauth_token: "{{ oauth_token }}"
+        command: create
+        region: fra1
+        block_size: 1
+        volume_name: rapture-block-storage
+        project_name: rapture
+      register: volume_result
+    - name: Create Droplet
       community.digitalocean.digital_ocean_droplet:
         state: present
         oauth_token: "{{ oauth_token }}"
@@ -34,6 +44,15 @@
       with_inventory_hostnames:
         - digitalocean
       register: droplet_result
+    - name: Attach Volume to Droplet
+      community.digitalocean.digital_ocean_block_storage:
+        state: present
+        oauth_token: "{{ oauth_token }}"
+        command: attach
+        volume_name: rapture-block-storage
+        region: fra1
+        droplet_id: "{{ item.data.droplet.id }}"
+      with_items: "{{ droplet_result.results }}"
     - name: Persist IP address in hostfile
       become: true # Do "sudo echo hi" or sth if you get an error
       ansible.builtin.lineinfile:
