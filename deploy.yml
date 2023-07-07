@@ -131,6 +131,11 @@
         src: config_files/nginx.conf
         dest: /etc/nginx/nginx.conf
         mode: '0644'
+    - name: Copy Docker Compose file
+      ansible.builtin.copy:
+        src: config_files/docker-compose.yml
+        dest: /opt/docker-compose.yml
+        mode: '0644'
     - name: UFW allow 80, 443 and 22 ports
       community.general.ufw:
         rule: allow
@@ -162,3 +167,6 @@
         - prometheus
         - grafana-server
         - cadvisor
+    - name: Docker Compose
+      community.docker.docker_compose:
+        project_src: /opt
