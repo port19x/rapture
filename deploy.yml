@@ -147,6 +147,17 @@
     - name: Enable UFW
       community.general.ufw:
         state: enabled
+    - name: Create Filesystem on Volume
+      community.general.filesystem:
+        fstype: ext4
+        dev: /dev/sda
+    - name: Mount Volume
+      ansible.posix.mount:
+        path: /mnt
+        src: /dev/sda
+        opts: noatime
+        state: mounted
+        fstype: ext4
 
 - name: Start Up Infra Stack
   hosts: all
