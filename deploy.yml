@@ -95,6 +95,7 @@
           - prometheus
           - prometheus-node-exporter
           - grafana
+          - cadvisor
 
 - name: Configure Infra Stack
   hosts: all
@@ -160,3 +161,4 @@
         - prometheus-node-exporter
         - prometheus
         - grafana-server
+        - cadvisor
