@@ -3,3 +3,4 @@ collections:
   - name: community.general
   - name: community.digitalocean
   - name: community.docker
+  - name: ansible.posix
