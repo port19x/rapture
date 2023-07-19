@@ -4,9 +4,3 @@ services:
     image: nginx
     ports:
       - 40001:80
-  minecraft:
-    image: phyremaster/papermc
-    ports:
-      - 25565:25565
-    volumes:
-      - /mnt:/papermc
