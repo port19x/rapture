@@ -19,7 +19,7 @@
       community.digitalocean.digital_ocean_sshkey:
         name: "Github Token"
         oauth_token: "{{ oauth_token }}"
-        ssh_pub_key: "{{ lookup('ansible.builtin.file', '~/.ssh/github.pub') }}"
+        ssh_pub_key: "{{ lookup('ansible.builtin.file', '~/.ssh/digital-ocean.pub') }}"
         state: present
       register: sshkey_result
 
