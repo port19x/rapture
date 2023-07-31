@@ -91,9 +91,7 @@
         - nginx
         - prometheus
         - grafana-server
-      when: file_result is changed
 
     - name: Docker Compose
       community.docker.docker_compose:
         project_src: /opt
-      when: file_result is changed
