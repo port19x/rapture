@@ -8,7 +8,7 @@
 # - Configure/Gathering -> just run again
 #   (fails with UNREACHABLE)
 ---
-- name: Provision Digital Ocean Droplet
+- name: Provision Digital Ocean Ressources
   become: true
   hosts: localhost
   vars:
@@ -101,41 +101,26 @@
   hosts: all
   become: true
   tasks:
-    - name: Copy Grafana Config
+    - name: Copy all the files
       ansible.builtin.copy:
-        src: config_files/grafana.ini
-        dest: /etc/grafana/grafana.ini
+        src: "{{ item.src }}"
+        dest: "{{ item.dest}}"
         mode: '0644'
-    - name: Copy Grafana Datasource Config
-      ansible.builtin.copy:
-        src: config_files/grafana-datasources.yml
-        dest: /etc/grafana/provisioning/datasources/datasources.yml
-        mode: '0644'
-    - name: Copy Grafana Dashboard Config
-      ansible.builtin.copy:
-        src: config_files/grafana-dashboard.yml
-        dest: /etc/grafana/provisioning/dashboards/dashboard.yml
-        mode: '0644'
-    - name: Copy Grafana Dashboard
-      ansible.builtin.copy:
-        src: config_files/grafana-dashboard.json
-        dest: /etc/grafana/provisioning/dashboards/dashboard.json
-        mode: '0644'
-    - name: Copy Prometheus Config
-      ansible.builtin.copy:
-        src: config_files/prometheus.yml
-        dest: /etc/prometheus/prometheus.yml
-        mode: '0644'
-    - name: Copy Nginx Config
-      ansible.builtin.copy:
-        src: config_files/nginx.conf
-        dest: /etc/nginx/nginx.conf
-        mode: '0644'
-    - name: Copy Docker Compose file
-      ansible.builtin.copy:
-        src: config_files/docker-compose.yml
-        dest: /opt/docker-compose.yml
-        mode: '0644'
+      loop:
+        - src: config_files/grafana.ini
+          dest: /etc/grafana/grafana.ini
+        - src: config_files/grafana-datasources.yml
+          dest: /etc/grafana/provisioning/datasources/datasources.yml
+        - src: config_files/grafana-dashboard.yml
+          dest: /etc/grafana/provisioning/dashboards/dashboard.yml
+        - src: config_files/grafana-dashboard.json
+          dest: /etc/grafana/provisioning/dashboards/dashboard.json
+        - src: config_files/prometheus.yml
+          dest: /etc/prometheus/prometheus.yml
+        - src: config_files/nginx.conf
+          dest: /etc/nginx/nginx.conf
+        - src: config_files/docker-compose.yml
+          dest: /opt/docker-compose.yml
     - name: UFW allow 80, 443 and 22 ports
       community.general.ufw:
         rule: allow
