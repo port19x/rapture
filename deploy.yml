@@ -70,10 +70,32 @@
         state: present
       with_items: "{{ droplet_result.results }}"
 
-- name: Install Infra Stack
+- name: Configure the Droplet
   hosts: all
   become: true
   tasks:
+    - name: Create Filesystem on Volume
+      community.general.filesystem:
+        fstype: ext4
+        dev: /dev/sda
+    - name: Mount Volume
+      ansible.posix.mount:
+        path: /mnt
+        src: /dev/sda
+        opts: noatime
+        state: mounted
+        fstype: ext4
+    - name: Configure Firewall
+      community.general.ufw:
+        state: enabled
+        rule: allow
+        port: "{{ item }}"
+      loop:
+        - 80   # HTTP
+        - 443  # HTTPS
+        - 22   # SSH
+    # - name: Obtain SSL certificate with Certbot
+    #   ansible.builtin.command: certbot --nginx --non-interactive --agree-tos --email port19@port19.xyz --redirect --domain hsnipe.moe
     - name: Import Grafana GPG Key
       ansible.builtin.apt_key:
         url: https://packages.grafana.com/gpg.key
@@ -96,11 +118,9 @@
           - prometheus-node-exporter
           - grafana
           - cadvisor
-
-- name: Configure Infra Stack
-  hosts: all
-  become: true
-  tasks:
+    - name: Sync
+      ansible.builtin.debug:
+        msg: "entrypoint during rapid prototyping" # ansible-playbook --start-at-task=Sync deploy.yml
     - name: Copy all the files
       ansible.builtin.copy:
         src: "{{ item.src }}"
@@ -121,33 +141,6 @@
           dest: /etc/nginx/nginx.conf
         - src: config_files/docker-compose.yml
           dest: /opt/docker-compose.yml
-    - name: Configure Firewall
-      community.general.ufw:
-        state: enabled
-        rule: allow
-        port: "{{ item }}"
-      loop:
-        - 80   # HTTP
-        - 443  # HTTPS
-        - 22   # SSH
-    - name: Create Filesystem on Volume
-      community.general.filesystem:
-        fstype: ext4
-        dev: /dev/sda
-    - name: Mount Volume
-      ansible.posix.mount:
-        path: /mnt
-        src: /dev/sda
-        opts: noatime
-        state: mounted
-        fstype: ext4
-
-- name: Start Up Infra Stack
-  hosts: all
-  become: true
-  tasks:
-    # - name: Obtain SSL certificate with Certbot
-    #   ansible.builtin.command: certbot --nginx --non-interactive --agree-tos --email port19@port19.xyz --redirect --domain hsnipe.moe
     - name: (Re-) Start Services
       ansible.builtin.systemd:
         daemon_reload: true
@@ -156,11 +149,8 @@
         name: "{{ item }}"
       with_items:
         - nginx
-        - docker
-        - prometheus-node-exporter
         - prometheus
         - grafana-server
-        - cadvisor
     - name: Docker Compose
       community.docker.docker_compose:
         project_src: /opt
