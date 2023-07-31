@@ -121,17 +121,15 @@
           dest: /etc/nginx/nginx.conf
         - src: config_files/docker-compose.yml
           dest: /opt/docker-compose.yml
-    - name: UFW allow 80, 443 and 22 ports
+    - name: Configure Firewall
       community.general.ufw:
+        state: enabled
         rule: allow
         port: "{{ item }}"
       loop:
         - 80   # HTTP
         - 443  # HTTPS
         - 22   # SSH
-    - name: Enable UFW
-      community.general.ufw:
-        state: enabled
     - name: Create Filesystem on Volume
       community.general.filesystem:
         fstype: ext4
