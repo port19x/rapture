@@ -20,6 +20,8 @@ jobs:
           inventory: |
             [all]
             hsnipe.moe
+            [all:vars]
+            ansible_user=root
           known_hosts: |
             hsnipe.moe ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKKV2bIi3Ksj3lAksW1qBgBmTlM+c+auiY+A4aMq7KPr
           requirements: requirements.yml
