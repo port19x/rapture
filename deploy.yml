@@ -120,7 +120,7 @@
           - cadvisor
     - name: Sync
       ansible.builtin.debug:
-        msg: "entrypoint during rapid prototyping" # ansible-playbook --start-at-task=Sync deploy.yml
+        msg: "entrypoint during rapid prototyping" # ansible-playbook --start-at-task Sync deploy.yml
     - name: Copy all the files
       ansible.builtin.copy:
         src: "{{ item.src }}"
