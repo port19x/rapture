@@ -93,7 +93,7 @@
         opts: noatime
         state: mounted
         fstype: ext4
-        
+
     - name: Configure Firewall
       community.general.ufw:
         state: enabled
@@ -169,7 +169,9 @@
         - nginx
         - prometheus
         - grafana-server
+      when: file_result is changed
 
     - name: Docker Compose
       community.docker.docker_compose:
         project_src: /opt
+      when: file_result is changed
