@@ -950,13 +950,10 @@
           "options": {
             "include": {
               "names": [
-                "container_label_com_docker_compose_project",
-                "container_label_com_docker_compose_project_working_dir",
                 "image",
-                "instance",
-                "name",
                 "Value",
-                "container_label_com_docker_compose_service"
+                "container_label_owner",
+                "container_label_port"
               ]
             }
           }
@@ -971,13 +968,22 @@
               "instance": false,
               "name": false
             },
-            "indexByName": {},
+            "indexByName": {
+              "Value": 4,
+              "container_label_owner": 0,
+              "container_label_port": 2,
+              "id": 3,
+              "image": 1
+            },
             "renameByName": {
               "Value": "Running",
               "container_label_com_docker_compose_project": "Label",
               "container_label_com_docker_compose_project_working_dir": "Working dir",
               "container_label_com_docker_compose_service": "Service",
-              "image": "Registry Image",
+              "container_label_owner": "Owner",
+              "container_label_port": "Port",
+              "id": "Container-Id",
+              "image": "Image/Name/Route",
               "instance": "Instance",
               "name": "Name"
             }
@@ -1425,13 +1431,13 @@
     ]
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-30m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Home",
-  "uid": "e9e176be-0b40-49ac-99a3-f9f9f9419bc4",
+  "uid": "a70bb2cb-eca3-457b-8dbb-002e6477acd5",
   "version": 1,
   "weekStart": ""
 }
