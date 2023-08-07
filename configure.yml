@@ -40,7 +40,6 @@
           - git
           - ufw
           - docker.io
-          - docker-compose
           - prometheus
           - prometheus-node-exporter
           - grafana
@@ -77,8 +76,6 @@
           dest: /etc/prometheus/prometheus.yml
         - src: config_files/nginx.conf
           dest: /etc/nginx/nginx.conf
-        - src: config_files/docker-compose.yml
-          dest: /opt/docker-compose.yml
       register: file_result
 
     - name: (Re-) Start Services
@@ -91,7 +88,3 @@
         - nginx
         - prometheus
         - grafana-server
-
-    - name: Docker Compose
-      community.docker.docker_compose:
-        project_src: /opt
