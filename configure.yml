@@ -35,28 +35,11 @@
         - 9090 # Prometheus
         - 3000 # Grafana
 
-    - name: Sync
-      ansible.builtin.meta: noop # ansible-playbook --start-at-task Sync deploy.yml
-
-    - name: Copy all the files
+    - name: Simpler Copy
       ansible.builtin.copy:
-        src: "{{ item.src }}"
-        dest: "{{ item.dest }}"
+        src: config_files/
+        dest: /opt
         mode: '0644'
-      loop:
-        - src: config_files/grafana.ini
-          dest: /etc/grafana/grafana.ini
-        - src: config_files/grafana-datasources.yml
-          dest: /etc/grafana/provisioning/datasources/datasources.yml
-        - src: config_files/grafana-dashboard.yml
-          dest: /etc/grafana/provisioning/dashboards/dashboard.yml
-        - src: config_files/grafana-dashboard.json
-          dest: /etc/grafana/provisioning/dashboards/dashboard.json
-        - src: config_files/prometheus.yml
-          dest: /etc/prometheus/prometheus.yml
-        - src: config_files/docker-compose.yml
-          dest: /opt/docker-compose.yml
-      register: file_result
 
     - name: Docker Compose
       community.docker.docker_compose:

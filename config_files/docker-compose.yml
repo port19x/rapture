@@ -7,10 +7,10 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - /etc/grafana/grafana.ini:/etc/grafana/grafana.ini
-      - /etc/grafana/provisioning/datasources/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
-      - /etc/grafana/provisioning/dashboards/dashboard.yml:/etc/grafana/provisioning/dashboards/dashboard.yml
-      - /etc/grafana/provisioning/dashboards/dashboard.json:/etc/grafana/provisioning/dashboards/dashboard.json
+      - /opt/grafana.ini:/etc/grafana/grafana.ini
+      - /opt/grafana-datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
+      - /opt/grafana-dashboard.yml:/etc/grafana/provisioning/dashboards/dashboard.yml
+      - /opt/grafana-dashboard.json:/etc/grafana/provisioning/dashboards/dashboard.json
     restart: always
     labels:
       - "owner=monitoring"
@@ -19,7 +19,7 @@ services:
   prometheus:
     image: prom/prometheus
     volumes:
-      - /etc/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - /opt/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - 9090:9090
     links:
