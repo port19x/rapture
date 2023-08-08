@@ -1,6 +1,66 @@
 version: '3'
 services:
   webserver:
-    image: nginx
+  grafana:
+    image: grafana/grafana
+    links:
+      - prometheus:prometheus
     ports:
-      - 40001:80
+      - 3000:3000
+    volumes:
+      - /etc/grafana/grafana.ini:/etc/grafana/grafana.ini
+      - /etc/grafana/provisioning/datasources/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
+      - /etc/grafana/provisioning/dashboards/dashboard.yml:/etc/grafana/provisioning/dashboards/dashboard.yml
+      - /etc/grafana/provisioning/dashboards/dashboard.json:/etc/grafana/provisioning/dashboards/dashboard.json
+    restart: always
+    labels:
+      - owner:monitoring
+      - port:3000
+
+  prometheus:
+    image: prom/prometheus:v2.36.2
+    volumes:
+      - /etc/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - 9090:9090
+    links:
+      - cadvisor:cadvisor
+      - node-exporter:node-exporter
+    restart: always
+    labels:
+      - owner:monitoring
+      - port:9090
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    ports:
+      - 8080:8080
+    restart: always
+    labels:
+      - owner:monitoring
+      - port:8080
+
+  node-exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+      - /:/host:ro,rslave
+    command:
+      - '--path.rootfs=/host'
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - --collector.filesystem.ignored-mount-points
+      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+    ports:
+      - 9100:9100
+    restart: always
+    labels:
+      - owner:monitoring
+      - port:9100
