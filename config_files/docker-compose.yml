@@ -1,6 +1,5 @@
 version: '3'
 services:
-  webserver:
   grafana:
     image: grafana/grafana
     links:
@@ -14,8 +13,8 @@ services:
       - /etc/grafana/provisioning/dashboards/dashboard.json:/etc/grafana/provisioning/dashboards/dashboard.json
     restart: always
     labels:
-      - owner:monitoring
-      - port:3000
+      - "owner=monitoring"
+      - "port=3000"
 
   prometheus:
     image: prom/prometheus:v2.36.2
@@ -28,8 +27,8 @@ services:
       - node-exporter:node-exporter
     restart: always
     labels:
-      - owner:monitoring
-      - port:9090
+      - "owner=monitoring"
+      - "port=9090"
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor
@@ -42,8 +41,8 @@ services:
       - 8080:8080
     restart: always
     labels:
-      - owner:monitoring
-      - port:8080
+      - "owner=monitoring"
+      - "port=8080"
 
   node-exporter:
     image: quay.io/prometheus/node-exporter:latest
@@ -62,5 +61,5 @@ services:
       - 9100:9100
     restart: always
     labels:
-      - owner:monitoring
-      - port:9100
+      - "owner=monitoring"
+      - "port=9100"
