@@ -23,15 +23,17 @@
           - docker.io
           - docker-compose
 
-    # - name: Configure Firewall
-    #   community.general.ufw:
-    #     state: enabled
-    #     rule: allow
-    #     port: "{{ item }}"
-    #   loop:
-    #     - 80   # HTTP
-    #     - 443  # HTTPS
-    #     - 22   # SSH
+    - name: Configure Firewall
+      community.general.ufw:
+        state: enabled
+        rule: allow
+        port: "{{ item }}"
+      loop:
+        - 80   # HTTP
+        - 443  # HTTPS
+        - 22   # SSH
+        - 9090 # Prometheus
+        - 3000 # Grafana
 
     - name: Sync
       ansible.builtin.meta: noop # ansible-playbook --start-at-task Sync deploy.yml
