@@ -88,10 +88,6 @@
         - prometheus
         - grafana-server
 
-    - name: Obtain SSL certificate with Certbot
-      ansible.builtin.command: certbot --nginx --non-interactive --agree-tos --email port19@port19.xyz --redirect --domain hsnipe.moe
-      when: ansible_facts['uptime_seconds'] > 3600
-
     - name: Docker Compose
       community.docker.docker_compose:
         project_src: /opt
