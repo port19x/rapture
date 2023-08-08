@@ -39,6 +39,9 @@ services:
       - /var/lib/docker/:/var/lib/docker:ro
     ports:
       - 8080:8080
+    command:
+      - '-housekeeping_interval=10s'
+      - '-docker_only=true'
     restart: always
     labels:
       - "owner=monitoring"
