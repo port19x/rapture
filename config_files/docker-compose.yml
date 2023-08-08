@@ -17,7 +17,7 @@ services:
       - "port=3000"
 
   prometheus:
-    image: prom/prometheus:v2.36.2
+    image: prom/prometheus
     volumes:
       - /etc/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
@@ -45,7 +45,7 @@ services:
       - "port=8080"
 
   node-exporter:
-    image: quay.io/prometheus/node-exporter:latest
+    image: prom/node-exporter
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro

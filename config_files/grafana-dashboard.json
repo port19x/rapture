@@ -904,6 +904,54 @@
                 }
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Owner"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 97
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Container-Id (count)"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 174
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": ". (count)"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 76
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Port (allValues)"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 309
+              }
+            ]
           }
         ]
       },
@@ -950,10 +998,10 @@
           "options": {
             "include": {
               "names": [
-                "image",
-                "Value",
                 "container_label_owner",
-                "container_label_port"
+                "container_label_port",
+                "image",
+                "id"
               ]
             }
           }
@@ -969,11 +1017,10 @@
               "name": false
             },
             "indexByName": {
-              "Value": 4,
               "container_label_owner": 0,
               "container_label_port": 2,
-              "id": 3,
-              "image": 1
+              "id": 1,
+              "image": 3
             },
             "renameByName": {
               "Value": "Running",
@@ -982,10 +1029,45 @@
               "container_label_com_docker_compose_service": "Service",
               "container_label_owner": "Owner",
               "container_label_port": "Port",
-              "id": "Container-Id",
-              "image": "Image/Name/Route",
+              "id": ".",
+              "image": "Image",
               "instance": "Instance",
               "name": "Name"
+            }
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              ".": {
+                "aggregations": [
+                  "count"
+                ],
+                "operation": "aggregate"
+              },
+              "Container-Id": {
+                "aggregations": [
+                  "count"
+                ],
+                "operation": "aggregate"
+              },
+              "Image": {
+                "aggregations": [
+                  "allValues"
+                ],
+                "operation": "aggregate"
+              },
+              "Owner": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "Port": {
+                "aggregations": [
+                  "allValues"
+                ],
+                "operation": "aggregate"
+              }
             }
           }
         }
@@ -1437,7 +1519,7 @@
   "timepicker": {},
   "timezone": "",
   "title": "Home",
-  "uid": "a70bb2cb-eca3-457b-8dbb-002e6477acd5",
+  "uid": "b0c47744-816c-4432-b107-d45c63650192",
   "version": 1,
   "weekStart": ""
 }
