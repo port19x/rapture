@@ -39,9 +39,9 @@
         state: present
         oauth_token: "{{ oauth_token }}"
         name: "{{ item }}"
-        size: s-1vcpu-512mb-10gb # https://slugs.do-api.dev/
+        size: s-1vcpu-1gb # https://slugs.do-api.dev/
         region: fra1
-        image: debian-11-x64
+        image: debian-12-x64
         unique_name: true
         ssh_keys: ["{{ sshkey_result.data.ssh_key.id }}"]
       with_inventory_hostnames:

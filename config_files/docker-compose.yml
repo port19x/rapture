@@ -1,4 +1,13 @@
 version: '3'
+
+networks:
+  proxy:
+    internal: false
+  application:
+    internal: true
+  monitoring:
+    internal: true
+
 services:
   grafana:
     image: grafana/grafana
@@ -11,6 +20,9 @@ services:
       - /opt/grafana-datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
       - /opt/grafana-dashboard.yml:/etc/grafana/provisioning/dashboards/dashboard.yml
       - /opt/grafana-dashboard.json:/etc/grafana/provisioning/dashboards/dashboard.json
+    networks:
+      - monitoring
+      - proxy
     restart: always
     labels:
       - "owner=monitoring"
@@ -25,6 +37,8 @@ services:
     links:
       - cadvisor:cadvisor
       - node-exporter:node-exporter
+    networks:
+      - monitoring
     restart: always
     labels:
       - "owner=monitoring"
@@ -42,6 +56,8 @@ services:
     command:
       - '-housekeeping_interval=10s'
       - '-docker_only=true'
+    networks:
+      - monitoring
     restart: always
     labels:
       - "owner=monitoring"
@@ -62,7 +78,29 @@ services:
       - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
     ports:
       - 9100:9100
+    networks:
+      - monitoring
     restart: always
     labels:
       - "owner=monitoring"
       - "port=9100"
+
+  server:
+    image: gitea/gitea:1.20.2
+    container_name: gitea
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+    restart: always
+    volumes:
+      - /mnt/gitea:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "3001:3000"
+      - "222:22"
+    networks:
+      - proxy
+    labels:
+      - "owner=applications"
+      - "port=222, 3001"
