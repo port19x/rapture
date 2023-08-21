@@ -3,7 +3,7 @@ version: '3'
 networks:
   proxy:
     internal: false
-  application:
+  applications:
     internal: true
   monitoring:
     internal: true
@@ -11,87 +11,90 @@ networks:
 services:
   grafana:
     image: grafana/grafana
-    links:
-      - prometheus:prometheus
-    ports:
-      - 3000:3000
+    restart: always
+    depends_on:
+      - prometheus
+    labels:
+      - "owner=monitoring"
+
     volumes:
       - /opt/grafana.ini:/etc/grafana/grafana.ini
       - /opt/grafana-datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
       - /opt/grafana-dashboard.yml:/etc/grafana/provisioning/dashboards/dashboard.yml
       - /opt/grafana-dashboard.json:/etc/grafana/provisioning/dashboards/dashboard.json
+
     networks:
       - monitoring
       - proxy
-    restart: always
-    labels:
-      - "owner=monitoring"
-      - "port=3000"
+    ports:
+      - 3000:3000
 
   prometheus:
     image: prom/prometheus
-    volumes:
-      - /opt/prometheus.yml:/etc/prometheus/prometheus.yml
-    ports:
-      - 9090:9090
-    links:
-      - cadvisor:cadvisor
-      - node-exporter:node-exporter
-    networks:
-      - monitoring
     restart: always
+    depends_on:
+      - cadvisor
+      - node-exporter
     labels:
       - "owner=monitoring"
-      - "port=9090"
+
+    volumes:
+      - /opt/prometheus.yml:/etc/prometheus/prometheus.yml
+
+    networks:
+      - monitoring
+    ports:
+      - 9090:9090
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor
+    restart: always
+    labels:
+      - "owner=monitoring"
+    command:
+      - '-housekeeping_interval=10s'
+      - '-docker_only=true'
+
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:rw
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
-    ports:
-      - 8080:8080
-    command:
-      - '-housekeeping_interval=10s'
-      - '-docker_only=true'
+
     networks:
       - monitoring
-    restart: always
-    labels:
-      - "owner=monitoring"
-      - "port=8080"
+    ports:
+      - 8080:8080
 
   node-exporter:
     image: prom/node-exporter
-    volumes:
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /:/rootfs:ro
-      - /:/host:ro,rslave
+    restart: always
+    labels:
+      - "owner=monitoring"
     command:
       - '--path.rootfs=/host'
       - '--path.procfs=/host/proc'
       - '--path.sysfs=/host/sys'
       - --collector.filesystem.ignored-mount-points
       - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+      - /:/host:ro,rslave
+
     ports:
       - 9100:9100
     networks:
       - monitoring
+
+  gitea:
+    image: gitea/gitea:1.20.2
     restart: always
     labels:
-      - "owner=monitoring"
-      - "port=9100"
+      - "owner=applications"
 
-  server:
-    image: gitea/gitea:1.20.2
-    container_name: gitea
-    environment:
-      - USER_UID=1000
-      - USER_GID=1000
-    restart: always
     volumes:
       - /mnt/gitea:/data
       - /etc/timezone:/etc/timezone:ro
@@ -101,6 +104,3 @@ services:
       - "222:22"
     networks:
       - proxy
-    labels:
-      - "owner=applications"
-      - "port=222, 3001"
