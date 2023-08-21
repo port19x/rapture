@@ -16,16 +16,14 @@ services:
       - prometheus
     labels:
       - "owner=monitoring"
-
     volumes:
       - /opt/grafana.ini:/etc/grafana/grafana.ini
       - /opt/grafana-datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
       - /opt/grafana-dashboard.yml:/etc/grafana/provisioning/dashboards/dashboard.yml
       - /opt/grafana-dashboard.json:/etc/grafana/provisioning/dashboards/dashboard.json
-
     networks:
       - monitoring
-      - proxy
+      - applications
     ports:
       - 3000:3000
 
@@ -37,10 +35,8 @@ services:
       - node-exporter
     labels:
       - "owner=monitoring"
-
     volumes:
       - /opt/prometheus.yml:/etc/prometheus/prometheus.yml
-
     networks:
       - monitoring
     ports:
@@ -54,13 +50,11 @@ services:
     command:
       - '-housekeeping_interval=10s'
       - '-docker_only=true'
-
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:rw
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
-
     networks:
       - monitoring
     ports:
@@ -77,13 +71,11 @@ services:
       - '--path.sysfs=/host/sys'
       - --collector.filesystem.ignored-mount-points
       - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
-
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
       - /:/rootfs:ro
       - /:/host:ro,rslave
-
     ports:
       - 9100:9100
     networks:
@@ -94,7 +86,6 @@ services:
     restart: always
     labels:
       - "owner=applications"
-
     volumes:
       - /mnt/gitea:/data
       - /etc/timezone:/etc/timezone:ro
@@ -104,3 +95,28 @@ services:
       - "222:22"
     networks:
       - proxy
+
+  nginx:
+    image: nginx:1.25.2-alpine
+    restart: always
+    labels:
+      - "owner=applications"
+    volumes:
+      - /mnt/port19.xyz:/usr/share/nginx/html:ro
+    ports:
+      - "40001:80"
+
+  haproxy:
+    image: haproxy:2.8.2-apline
+    restart: always
+    labels:
+      - "owner=proxy"
+    volumes:
+      - /opt/haproxy.cfg:/etc/haproxy/haproxy.cfg
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - proxy
+      - applications
+      - monitoring
