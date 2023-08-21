@@ -1,17 +1,16 @@
 version: '3'
 
 networks:
+  default:
+    internal: true
   proxy:
     internal: false
-  applications:
-    internal: true
-  monitoring:
-    internal: true
 
 services:
   grafana:
     image: grafana/grafana
     restart: always
+    container_name: grafana
     depends_on:
       - prometheus
     labels:
@@ -22,14 +21,15 @@ services:
       - /opt/grafana-dashboard.yml:/etc/grafana/provisioning/dashboards/dashboard.yml
       - /opt/grafana-dashboard.json:/etc/grafana/provisioning/dashboards/dashboard.json
     networks:
-      - monitoring
-      - applications
+      - proxy
+      - default
     ports:
       - 3000:3000
 
   prometheus:
     image: prom/prometheus
     restart: always
+    container_name: prometheus
     depends_on:
       - cadvisor
       - node-exporter
@@ -37,14 +37,13 @@ services:
       - "owner=monitoring"
     volumes:
       - /opt/prometheus.yml:/etc/prometheus/prometheus.yml
-    networks:
-      - monitoring
     ports:
       - 9090:9090
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor
     restart: always
+    container_name: cadvisor
     labels:
       - "owner=monitoring"
     command:
@@ -55,14 +54,13 @@ services:
       - /var/run:/var/run:rw
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
-    networks:
-      - monitoring
     ports:
       - 8080:8080
 
   node-exporter:
     image: prom/node-exporter
     restart: always
+    container_name: node-exporter
     labels:
       - "owner=monitoring"
     command:
@@ -78,12 +76,11 @@ services:
       - /:/host:ro,rslave
     ports:
       - 9100:9100
-    networks:
-      - monitoring
 
   gitea:
     image: gitea/gitea:1.20.2
     restart: always
+    container_name: gitea
     labels:
       - "owner=applications"
     volumes:
@@ -91,32 +88,41 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     ports:
-      - "3001:3000"
-      - "222:22"
+      - 3001:3000
+      - 222:22
     networks:
+      - default
       - proxy
 
   nginx:
     image: nginx:1.25.2-alpine
     restart: always
+    container_name: nginx
     labels:
       - "owner=applications"
     volumes:
       - /mnt/port19.xyz:/usr/share/nginx/html:ro
+    networks:
+      - default
+      - proxy
     ports:
-      - "40001:80"
+      - 40001:80
 
   haproxy:
-    image: haproxy:2.8.2-apline
+    image: haproxytech/haproxy-alpine:2.8.2
     restart: always
+    container_name: haproxy
+    depends_on:
+      - gitea
+      - grafana
+      - nginx
     labels:
       - "owner=proxy"
     volumes:
-      - /opt/haproxy.cfg:/etc/haproxy/haproxy.cfg
-    ports:
-      - "80:80"
-      - "443:443"
+      - /opt/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
     networks:
       - proxy
-      - applications
-      - monitoring
+      - default
+    ports:
+      - 80:80
+      - 443:443
