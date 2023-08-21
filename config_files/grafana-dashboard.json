@@ -956,7 +956,7 @@
         ]
       },
       "gridPos": {
-        "h": 6,
+        "h": 5,
         "w": 24,
         "x": 0,
         "y": 3
@@ -1086,10 +1086,10 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 6,
+        "h": 8,
         "w": 12,
         "x": 0,
-        "y": 9
+        "y": 8
       },
       "hiddenSeries": false,
       "id": 26,
@@ -1176,10 +1176,10 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 6,
+        "h": 8,
         "w": 12,
         "x": 12,
-        "y": 9
+        "y": 8
       },
       "hiddenSeries": false,
       "id": 21,
@@ -1268,10 +1268,10 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 6,
+        "h": 8,
         "w": 12,
         "x": 0,
-        "y": 15
+        "y": 16
       },
       "hiddenSeries": false,
       "id": 23,
@@ -1360,10 +1360,10 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 6,
+        "h": 8,
         "w": 12,
         "x": 12,
-        "y": 15
+        "y": 16
       },
       "hiddenSeries": false,
       "id": 24,
@@ -1513,13 +1513,13 @@
     ]
   },
   "time": {
-    "from": "now-30m",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Home",
-  "uid": "b0c47744-816c-4432-b107-d45c63650192",
+  "uid": "be1cb6f8-e407-4d61-a19e-b8b180ad8b63",
   "version": 1,
   "weekStart": ""
 }
