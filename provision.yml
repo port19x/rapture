@@ -13,6 +13,7 @@
   hosts: localhost
   vars:
     oauth_token: "{{ lookup('ansible.builtin.file', '.digital-ocean-token') }}"
+    domain: hsnipe.moe
   tasks:
 
     - name: Register SSH Public Key
@@ -62,10 +63,23 @@
       community.digitalocean.digital_ocean_domain:
         state: present
         oauth_token: "{{ oauth_token }}"
-        name: hsnipe.moe
+        name: "{{ domain }}"
         ip: "{{ item.data.droplet.networks.v4.0.ip_address }}"
         project: rapture
       with_items: "{{ droplet_result.results }}"
+
+    - name: Create CNAME DNS Records
+      community.digitalocean.digital_ocean_domain_record:
+        state: present
+        oauth_token: "{{ oauth_token }}"
+        domain: "{{ domain }}"
+        name: "{{ item }}"
+        data: "{{ domain }}"
+        type: CNAME
+      with_items:
+        - git
+        - status
+        - www
 
     - name: Persist IP address in hostfile
       become: true # Do "sudo echo hi" or sth if you get an error
