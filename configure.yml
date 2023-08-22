@@ -29,6 +29,11 @@
         dest: /opt
         mode: '0644'
 
-    - name: Docker Compose
+    - name: Docker Compose Down
+      community.docker.docker_compose:
+        state: absent
+        project_src: /opt
+
+    - name: Docker Compose Up
       community.docker.docker_compose:
         project_src: /opt
