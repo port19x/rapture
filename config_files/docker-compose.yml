@@ -49,6 +49,7 @@ services:
     command:
       - '-housekeeping_interval=10s'
       - '-docker_only=true'
+      - '-storage_duration=2m0s'
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:rw
