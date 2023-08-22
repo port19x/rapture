@@ -111,6 +111,7 @@ services:
       - "owner=proxy"
     volumes:
       - /opt/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+      - /mnt/haproxy.pem:/haproxy.pem
     networks:
       - proxy
       - default
