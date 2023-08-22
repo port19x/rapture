@@ -913,7 +913,7 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 97
+                "value": 127
               }
             ]
           },
@@ -956,7 +956,7 @@
         ]
       },
       "gridPos": {
-        "h": 5,
+        "h": 6,
         "w": 24,
         "x": 0,
         "y": 3
@@ -983,7 +983,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "(time() - container_start_time_seconds{instance=~\"$host\",name=~\"$container\",name=~\".+\"})/86400",
+          "expr": "(time() - container_start_time_seconds{name=~\"$container\", image=~\".+\"})/86400",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -1083,13 +1083,14 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
+      "description": "5m Rolling Average",
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 8
+        "y": 9
       },
       "hiddenSeries": false,
       "id": 26,
@@ -1125,10 +1126,12 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(rate(container_cpu_usage_seconds_total{instance=~\"$host\",name=~\"$container\",name=~\".+\"}[5m])) by (name) *100",
+          "editorMode": "code",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{name=~\"$container\"}[5m])) by (name) *100",
           "hide": false,
           "interval": "",
           "legendFormat": "{{name}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -1173,13 +1176,14 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
+      "description": "Snapshot",
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 8
+        "y": 9
       },
       "hiddenSeries": false,
       "id": 21,
@@ -1216,7 +1220,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_usage_bytes{instance=~\"$host\",name=~\"$container\",name=~\".+\"}) by (name)",
+          "expr": "sum(container_memory_usage_bytes{name=~\"$container\"}) by (name)",
           "hide": false,
           "interval": "",
           "legendFormat": "{{name}}",
@@ -1265,34 +1269,49 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
+      "description": "5m Rolling Count",
+      "fieldConfig": {
+        "defaults": {
+          "links": [],
+          "unit": "short"
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 8,
+        "h": 6,
         "w": 12,
         "x": 0,
-        "y": 16
+        "y": 17
       },
       "hiddenSeries": false,
-      "id": 23,
+      "id": 27,
       "legend": {
-        "alignAsTable": true,
-        "avg": true,
+        "avg": false,
         "current": false,
-        "hideEmpty": false,
-        "hideZero": false,
-        "max": true,
+        "max": false,
         "min": false,
-        "rightSide": true,
         "show": true,
         "total": false,
-        "values": true
+        "values": false
       },
       "lines": true,
       "linewidth": 1,
+      "links": [],
       "nullPointMode": "null",
       "options": {
-        "alertThreshold": true
+        "alertThreshold": true,
+        "legend": {
+          "calcs": [],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
       },
       "percentage": false,
       "pluginVersion": "10.0.3",
@@ -1309,16 +1328,23 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(rate(container_network_receive_bytes_total{instance=~\"$host\",name=~\"$container\",name=~\".+\"}[5m])) by (name)",
-          "hide": false,
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum(increase(haproxy_backend_http_responses_total{proxy=~\"$backend\",code=~\"$code\"}[5m])) by (proxy)",
+          "format": "time_series",
+          "instant": false,
           "interval": "",
-          "legendFormat": "{{name}}",
-          "refId": "A"
+          "intervalFactor": 1,
+          "legendFormat": "Total {{ proxy }}",
+          "metric": "",
+          "range": true,
+          "refId": "A",
+          "step": 240
         }
       ],
       "thresholds": [],
       "timeRegions": [],
-      "title": "Received Network Traffic",
+      "title": "HTTP Responses by Backend",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -1332,13 +1358,13 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:674",
-          "format": "Bps",
+          "$$hashKey": "object:66",
+          "format": "short",
           "logBase": 1,
           "show": true
         },
         {
-          "$$hashKey": "object:675",
+          "$$hashKey": "object:67",
           "format": "short",
           "logBase": 1,
           "show": true
@@ -1357,32 +1383,49 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
+      "description": "5m Rolling Count",
+      "fieldConfig": {
+        "defaults": {
+          "links": [],
+          "unit": "short"
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 8,
+        "h": 6,
         "w": 12,
         "x": 12,
-        "y": 16
+        "y": 17
       },
       "hiddenSeries": false,
-      "id": 24,
+      "id": 28,
       "legend": {
-        "alignAsTable": true,
-        "avg": true,
+        "avg": false,
         "current": false,
-        "max": true,
+        "max": false,
         "min": false,
-        "rightSide": true,
         "show": true,
         "total": false,
-        "values": true
+        "values": false
       },
       "lines": true,
       "linewidth": 1,
+      "links": [],
       "nullPointMode": "null",
       "options": {
-        "alertThreshold": true
+        "alertThreshold": true,
+        "legend": {
+          "calcs": [],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
       },
       "percentage": false,
       "pluginVersion": "10.0.3",
@@ -1399,15 +1442,20 @@
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "expr": "sum(rate(container_network_transmit_bytes_total{instance=~\"$host\",name=~\"$container\",name=~\".+\"}[5m])) by (name)",
+          "editorMode": "code",
+          "expr": "sum(increase(haproxy_backend_http_responses_total{proxy=~\"$backend\",code=~\"$code\"}[5m])) by (code)",
           "interval": "",
-          "legendFormat": "{{name}}",
-          "refId": "A"
+          "intervalFactor": 1,
+          "legendFormat": "Total {{ code }}",
+          "metric": "",
+          "range": true,
+          "refId": "A",
+          "step": 240
         }
       ],
       "thresholds": [],
       "timeRegions": [],
-      "title": "Sent Network Traffic",
+      "title": "HTTP Responses by Status",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -1421,13 +1469,13 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:832",
-          "format": "Bps",
+          "$$hashKey": "object:142",
+          "format": "short",
           "logBase": 1,
           "show": true
         },
         {
-          "$$hashKey": "object:833",
+          "$$hashKey": "object:143",
           "format": "short",
           "logBase": 1,
           "show": true
@@ -1438,7 +1486,7 @@
       }
     }
   ],
-  "refresh": "10s",
+  "refresh": "5s",
   "schemaVersion": 38,
   "style": "dark",
   "tags": [],
@@ -1457,19 +1505,20 @@
         "name": "DS_PROMETHEUS",
         "options": [],
         "query": "prometheus",
+        "queryValue": "",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
         "type": "datasource"
       },
       {
-        "allValue": ".*",
+        "allValue": ".+",
         "current": {},
         "datasource": {
           "type": "prometheus",
           "uid": "${DS_PROMETHEUS}"
         },
-        "definition": "label_values({__name__=~\"container.*\", instance=~\"$host\"},name)",
+        "definition": "label_values({__name__=~\"container.*\"},name)",
         "hide": 0,
         "includeAll": true,
         "label": "Container",
@@ -1477,7 +1526,7 @@
         "name": "container",
         "options": [],
         "query": {
-          "query": "label_values({__name__=~\"container.*\", instance=~\"$host\"},name)",
+          "query": "label_values({__name__=~\"container.*\"},name)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
@@ -1487,27 +1536,49 @@
         "type": "query"
       },
       {
-        "allValue": ".*",
         "current": {},
         "datasource": {
           "type": "prometheus",
           "uid": "${DS_PROMETHEUS}"
         },
-        "definition": "label_values({__name__=~\"container.*\"},instance)",
+        "definition": "label_values(haproxy_server_http_responses_total,code)",
         "hide": 0,
         "includeAll": true,
-        "label": "Host",
-        "multi": false,
-        "name": "host",
+        "label": "Status",
+        "multi": true,
+        "name": "code",
         "options": [],
         "query": {
-          "query": "label_values({__name__=~\"container.*\"},instance)",
+          "query": "label_values(haproxy_server_http_responses_total,code)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
-        "sort": 5,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
+        "definition": "label_values(haproxy_backend_status,proxy)",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Backend",
+        "multi": true,
+        "name": "backend",
+        "options": [],
+        "query": {
+          "query": "label_values(haproxy_backend_status,proxy)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
         "type": "query"
       }
     ]
@@ -1519,7 +1590,7 @@
   "timepicker": {},
   "timezone": "",
   "title": "Home",
-  "uid": "be1cb6f8-e407-4d61-a19e-b8b180ad8b63",
+  "uid": "ae3499e5-ca8b-4938-a36b-07af541a222e",
   "version": 1,
   "weekStart": ""
 }
