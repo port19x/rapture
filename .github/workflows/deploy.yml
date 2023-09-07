@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout master
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         
       - name: Run playbook
         uses: dawidd6/action-ansible-playbook@v2
