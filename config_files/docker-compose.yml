@@ -8,7 +8,7 @@ networks:
 
 services:
   grafana:
-    image: docker.io/grafana/grafana:10.1.0
+    image: grafana/grafana:10.1.0
     restart: always
     container_name: grafana
     depends_on:
@@ -24,7 +24,7 @@ services:
       - default
 
   prometheus:
-    image: docker.io/prom/prometheus:v2.46.0
+    image: prom/prometheus:v2.46.0
     restart: always
     container_name: prometheus
     depends_on:
@@ -56,7 +56,7 @@ services:
       - 8080:8080
 
   node-exporter:
-    image: docker.io/prom/node-exporter:v1.6.1
+    image: prom/node-exporter:v1.6.1
     restart: always
     container_name: node-exporter
     labels:
@@ -76,7 +76,7 @@ services:
       - 9100:9100
 
   gitea:
-    image: docker.io/gitea/gitea:1.20.2
+    image: gitea/gitea:1.20.2
     restart: always
     container_name: gitea
     labels:
@@ -89,7 +89,7 @@ services:
       - default
 
   nginx:
-    image: docker.io/nginx:1.25.2-alpine
+    image: nginx:1.25.2-alpine
     restart: always
     container_name: nginx
     labels:
@@ -100,7 +100,7 @@ services:
       - default
 
   haproxy:
-    image: docker.io/haproxytech/haproxy-alpine:2.8.2
+    image: haproxytech/haproxy-alpine:2.8.2
     restart: always
     container_name: haproxy
     depends_on:
