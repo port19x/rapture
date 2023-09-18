@@ -1,7 +1,5 @@
 # Rapture
 
-[![continous awesomeness](https://github.com/port19x/rapture/actions/workflows/deploy.yml/badge.svg?branch=master)](https://github.com/port19x/rapture/actions/workflows/deploy.yml)
-
 Currently hosts a gitea instance mirroring my repos as well as a copy of my website and a grafana dashboard.
 More to come.
 
