@@ -131,15 +131,6 @@ services:
     networks:
       - default
 
-  syncplay-server:
-    image: ninetaillabs/syncplay-server:v-1.6.9
-    restart: always
-    container_name: syncplay
-    labels:
-      - "owner=applications"
-    networks:
-      - default
-
   jitsi:
     image: jitsi/web:stable-8960
     restart: always
