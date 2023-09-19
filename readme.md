@@ -16,7 +16,7 @@ Currently hosts a gitea instance mirroring my repos as well as a copy of my webs
   - [ ] Formalized backup strategy
 - [ ] Host PoC [Django](https://docs.djangoproject.com/en/2.2/howto/deployment/) webapp
 - [ ] Host [Jitsi](https://github.com/jitsi/docker-jitsi-meet) Instance
-- [ ] Host [Syncplay](https://github.com/janeczku/calibre-web) Instance
+- [ ] Host [Syncplay](https://hub.docker.com/r/ninetaillabs/syncplay-server) Instance
 - [ ] Host [Calibre Web](https://github.com/janeczku/calibre-web)
 - [ ] Migrate to [netcup](https://www.netcup.de/bestellen/produkt.php?produkt=2892)
 - [ ] Host [Arch Linux Mirror](https://wiki.archlinux.org/title/DeveloperWiki:NewMirrors)
