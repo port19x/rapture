@@ -16,7 +16,11 @@ Currently hosts a gitea instance mirroring my repos as well as a copy of my webs
   - [ ] Formalized backup strategy
 - [ ] Host PoC [Django](https://docs.djangoproject.com/en/2.2/howto/deployment/) webapp
 - [ ] Host [Jitsi](https://github.com/jitsi/docker-jitsi-meet) Instance
-- [ ] Host [Syncplay](https://hub.docker.com/r/ninetaillabs/syncplay-server) Instance
-- [ ] Host [Calibre Web](https://github.com/janeczku/calibre-web)
+- [x] Host [Kavita](https://github.com/Kareadita/Kavita) eBook Library
 - [ ] Migrate to [netcup](https://www.netcup.de/bestellen/produkt.php?produkt=2892)
 - [ ] Host [Arch Linux Mirror](https://wiki.archlinux.org/title/DeveloperWiki:NewMirrors)
+
+## Wall of Shame
+
+- [Calibre Web](https://github.com/janeczku/calibre-web) - Want to host some ebooks? How about you generate a database first?
+- [Syncplay](https://github.com/Syncplay/syncplay/issues/573#issuecomment-1362880943) - Want to do SSL Termination on the reverse proxy? No way!
