@@ -12,7 +12,6 @@ Currently hosts a gitea instance mirroring my repos as well as a copy of my webs
 - [ ] Improve security posture
   - [ ] SSH Fingerprint in Playbook
   - [ ] Resource limits in docker compose
-  - [ ] Non-root user
   - [x] Formalized state backup strategy - `scp -r root@hsnipe.moe:/mnt/ ./backup`
 - [ ] Host PoC [Django](https://docs.djangoproject.com/en/2.2/howto/deployment/) webapp
 - [ ] Host [Jitsi](https://github.com/jitsi/docker-jitsi-meet) Instance
