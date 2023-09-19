@@ -20,8 +20,6 @@ services:
       - /opt/grafana-datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
       - /opt/grafana-dashboard.yml:/etc/grafana/provisioning/dashboards/dashboard.yml
       - /opt/grafana-dashboard.json:/etc/grafana/provisioning/dashboards/dashboard.json
-    networks:
-      - default
 
   prometheus:
     image: prom/prometheus:v2.46.0
@@ -85,8 +83,6 @@ services:
       - /mnt/gitea:/data
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
-    networks:
-      - default
 
   nginx:
     image: nginx:1.25.2-alpine
@@ -96,8 +92,6 @@ services:
       - "owner=applications"
     volumes:
       - /mnt/port19.xyz:/usr/share/nginx/html:ro
-    networks:
-      - default
 
   haproxy:
     image: haproxytech/haproxy-alpine:2.8.2
@@ -128,8 +122,6 @@ services:
     volumes:
       - /mnt/books:/manga
       - /mnt/kavita:/kavita/config
-    networks:
-      - default
 
   jitsi:
     image: jitsi/web:stable-8960
@@ -140,5 +132,3 @@ services:
       - DISABLE_HTTPS=1
     labels:
       - "owner=applications"
-    networks:
-      - default
