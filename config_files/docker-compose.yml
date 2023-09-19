@@ -121,12 +121,21 @@ services:
 
   calibre-web:
     image: linuxserver/calibre-web:0.6.20
-    restart: unless-stopped
+    restart: always
     container_name: calibre-web
     labels:
       - "owner=applications"
     volumes:
       - /mnt/calibre-web:/config
       - /mnt/books:/books
+    networks:
+      - default
+
+  syncplay-server:
+    image: ninetaillabs/syncplay-server:v-1.6.9
+    restart: always
+    container_name: syncplay
+    labels:
+      - "owner=applications"
     networks:
       - default
