@@ -6,82 +6,17 @@ networks:
   proxy:
     internal: false
 
+x-monitoring_defaults: &monitoring_defaults
+  restart: always
+  labels:
+    - "owner=monitoring"
+
+x-application_defaults: &application_defaults
+  restart: on-failure
+  labels:
+    - "owner=applications"
+
 services:
-  grafana:
-    image: grafana/grafana:10.1.0
-    restart: always
-    container_name: grafana
-    labels:
-      - "owner=monitoring"
-    volumes:
-      - /opt/grafana.ini:/etc/grafana/grafana.ini
-      - /opt/grafana-datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
-      - /opt/grafana-dashboard.yml:/etc/grafana/provisioning/dashboards/dashboard.yml
-      - /opt/grafana-dashboard.json:/etc/grafana/provisioning/dashboards/dashboard.json
-
-  prometheus:
-    image: prom/prometheus:v2.46.0
-    restart: always
-    container_name: prometheus
-    labels:
-      - "owner=monitoring"
-    volumes:
-      - /opt/prometheus.yml:/etc/prometheus/prometheus.yml
-
-  cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.47.2
-    restart: always
-    container_name: cadvisor
-    labels:
-      - "owner=monitoring"
-    command:
-      - '-housekeeping_interval=10s'
-      - '-docker_only=true'
-      - '-storage_duration=2m0s'
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:rw
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-
-  node-exporter:
-    image: prom/node-exporter:v1.6.1
-    restart: always
-    container_name: node-exporter
-    labels:
-      - "owner=monitoring"
-    command:
-      - '--path.rootfs=/host'
-      - '--path.procfs=/host/proc'
-      - '--path.sysfs=/host/sys'
-      - --collector.filesystem.ignored-mount-points
-      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
-    volumes:
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /:/rootfs:ro
-      - /:/host:ro,rslave
-
-  gitea:
-    image: gitea/gitea:1.20.2
-    restart: always
-    container_name: gitea
-    labels:
-      - "owner=applications"
-    volumes:
-      - /mnt/gitea:/data
-      - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro
-
-  nginx:
-    image: nginx:1.25.2-alpine
-    restart: always
-    container_name: nginx
-    labels:
-      - "owner=applications"
-    volumes:
-      - /mnt/port19.xyz:/usr/share/nginx/html:ro
-
   haproxy:
     image: haproxytech/haproxy-alpine:2.8.2
     restart: always
@@ -98,22 +33,82 @@ services:
       - 80:80
       - 443:443
 
+  grafana:
+    << : *monitoring_defaults
+    image: grafana/grafana:10.1.0
+    container_name: grafana
+    volumes:
+      - /opt/grafana.ini:/etc/grafana/grafana.ini
+      - /opt/grafana-datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
+      - /opt/grafana-dashboard.yml:/etc/grafana/provisioning/dashboards/dashboard.yml
+      - /opt/grafana-dashboard.json:/etc/grafana/provisioning/dashboards/dashboard.json
+
+  prometheus:
+    << : *monitoring_defaults
+    image: prom/prometheus:v2.46.0
+    container_name: prometheus
+    volumes:
+      - /opt/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  cadvisor:
+    << : *monitoring_defaults
+    image: gcr.io/cadvisor/cadvisor:v0.47.2
+    container_name: cadvisor
+    command:
+      - '-housekeeping_interval=10s'
+      - '-docker_only=true'
+      - '-storage_duration=2m0s'
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+
+  node-exporter:
+    << : *monitoring_defaults
+    image: prom/node-exporter:v1.6.1
+    container_name: node-exporter
+    command:
+      - '--path.rootfs=/host'
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - --collector.filesystem.ignored-mount-points
+      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+      - /:/host:ro,rslave
+
+  gitea:
+    << : *application_defaults
+    image: gitea/gitea:1.20.2
+    container_name: gitea
+    volumes:
+      - /mnt/gitea:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+
+  nginx:
+    << : *application_defaults
+    image: nginx:1.25.2-alpine
+    container_name: nginx
+    volumes:
+      - /mnt/port19.xyz:/usr/share/nginx/html:ro
+
+
   kavita:
+    << : *application_defaults
     image: kizaing/kavita:0.7.8
-    restart: always
     container_name: kavita
-    labels:
-      - "owner=applications"
     volumes:
       - /mnt/books:/manga
       - /mnt/kavita:/kavita/config
 
   jitsi:
+    << : *application_defaults
     image: jitsi/web:stable-8960
-    restart: always
     container_name: jitsi
     environment:
       - ENABLE_AUTH=0
       - DISABLE_HTTPS=1
-    labels:
-      - "owner=applications"
