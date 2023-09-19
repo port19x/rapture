@@ -11,8 +11,6 @@ services:
     image: grafana/grafana:10.1.0
     restart: always
     container_name: grafana
-    depends_on:
-      - prometheus
     labels:
       - "owner=monitoring"
     volumes:
@@ -25,9 +23,6 @@ services:
     image: prom/prometheus:v2.46.0
     restart: always
     container_name: prometheus
-    depends_on:
-      - cadvisor
-      - node-exporter
     labels:
       - "owner=monitoring"
     volumes:
@@ -97,10 +92,6 @@ services:
     image: haproxytech/haproxy-alpine:2.8.2
     restart: always
     container_name: haproxy
-    depends_on:
-      - gitea
-      - grafana
-      - nginx
     labels:
       - "owner=proxy"
     volumes:
