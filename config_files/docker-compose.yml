@@ -119,15 +119,15 @@ services:
       - 80:80
       - 443:443
 
-  calibre-web:
-    image: linuxserver/calibre-web:0.6.20
+  kavita:
+    image: kizaing/kavita:0.7.8
     restart: always
-    container_name: calibre-web
+    container_name: kavita
     labels:
       - "owner=applications"
     volumes:
-      - /mnt/calibre-web:/config
-      - /mnt/books:/books
+      - /mnt/books:/manga
+      - /mnt/kavita:/kavita/config
     networks:
       - default
 
