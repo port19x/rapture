@@ -8,7 +8,7 @@
       community.digitalocean.digital_ocean_droplet:
         state: absent
         oauth_token: "{{ oauth_token }}"
-        name: rapturev2.example.com
+        name: rapturev3.example.com
         unique_name: true
     - name: Destroy Domain
       community.digitalocean.digital_ocean_domain:
