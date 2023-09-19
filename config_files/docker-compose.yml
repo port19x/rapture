@@ -10,21 +10,11 @@ x-monitoring_defaults: &monitoring_defaults
   restart: always
   labels:
     - "owner=monitoring"
-  deploy:
-    resources:
-      limits:
-        cpus: '0.1'
-        memory: 100M
 
 x-application_defaults: &application_defaults
   restart: on-failure
   labels:
     - "owner=applications"
-  deploy:
-    resources:
-      limits:
-        cpus: '0.1'
-        memory: 250M
 
 services:
   haproxy:
@@ -105,7 +95,6 @@ services:
     container_name: nginx
     volumes:
       - /mnt/port19.xyz:/usr/share/nginx/html:ro
-
 
   kavita:
     << : *application_defaults
