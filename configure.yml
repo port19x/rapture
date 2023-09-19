@@ -36,4 +36,5 @@
 
     - name: Docker Compose Up
       community.docker.docker_compose:
+        remove_orphans: true
         project_src: /opt
