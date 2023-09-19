@@ -80,6 +80,9 @@
         - git
         - status
         - www
+        - books
+        - jitsi
+        - sync
 
     - name: Persist IP address in hostfile
       become: true # Do "sudo echo hi" or sth if you get an error
