@@ -38,7 +38,7 @@ services:
       - 9090:9090
 
   cadvisor:
-    image: gcr.io/cadvisor/cadvisor
+    image: gcr.io/cadvisor/cadvisor:v0.47.2
     restart: always
     container_name: cadvisor
     labels:
@@ -118,3 +118,15 @@ services:
     ports:
       - 80:80
       - 443:443
+
+  calibre-web:
+    image: linuxserver/calibre-web:0.6.20
+    restart: unless-stopped
+    container_name: calibre-web
+    labels:
+      - "owner=applications"
+    volumes:
+      - /mnt/calibre-web:/config
+      - /mnt/books:/books
+    networks:
+      - default
