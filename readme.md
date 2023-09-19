@@ -13,7 +13,7 @@ Currently hosts a gitea instance mirroring my repos as well as a copy of my webs
   - [ ] SSH Fingerprint in Playbook
   - [ ] Resource limits in docker compose
   - [ ] Non-root user
-  - [ ] Formalized backup strategy
+  - [x] Formalized state backup strategy - `scp -r root@hsnipe.moe:/mnt/ ./backup`
 - [ ] Host PoC [Django](https://docs.djangoproject.com/en/2.2/howto/deployment/) webapp
 - [ ] Host [Jitsi](https://github.com/jitsi/docker-jitsi-meet) Instance
 - [x] Host [Kavita](https://github.com/Kareadita/Kavita) eBook Library
