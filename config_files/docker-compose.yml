@@ -27,8 +27,6 @@ services:
       - "owner=monitoring"
     volumes:
       - /opt/prometheus.yml:/etc/prometheus/prometheus.yml
-    ports:
-      - 9090:9090
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.47.2
@@ -45,8 +43,6 @@ services:
       - /var/run:/var/run:rw
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
-    ports:
-      - 8080:8080
 
   node-exporter:
     image: prom/node-exporter:v1.6.1
@@ -65,8 +61,6 @@ services:
       - /sys:/host/sys:ro
       - /:/rootfs:ro
       - /:/host:ro,rslave
-    ports:
-      - 9100:9100
 
   gitea:
     image: gitea/gitea:1.20.2
