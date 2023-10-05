@@ -40,7 +40,7 @@
         state: present
         oauth_token: "{{ oauth_token }}"
         name: "{{ item }}"
-        size: s-1vcpu-2gb # https://slugs.do-api.dev/
+        size: s-1vcpu-512mb-10gb # https://slugs.do-api.dev/
         region: fra1
         image: debian-12-x64
         unique_name: true
@@ -77,12 +77,8 @@
         data: "{{ domain }}"
         type: CNAME
       with_items:
-        - git
         - status
         - www
-        - books
-        - jitsi
-        - sync
 
     - name: Persist IP address in hostfile
       become: true # Do "sudo echo hi" or sth if you get an error
