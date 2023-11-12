@@ -8,8 +8,10 @@
       community.digitalocean.digital_ocean_droplet:
         state: absent
         oauth_token: "{{ oauth_token }}"
-        name: rapturev3.example.com
+        name: "{{ item }}"
         unique_name: true
+      with_inventory_hostnames:
+        - digitalocean
     - name: Destroy Domain
       community.digitalocean.digital_ocean_domain:
         state: absent
