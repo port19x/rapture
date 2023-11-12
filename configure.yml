@@ -3,19 +3,6 @@
   become: true
   tasks:
 
-    - name: Create Filesystem on Volume
-      community.general.filesystem:
-        fstype: ext4
-        dev: /dev/sda
-
-    - name: Mount Volume
-      ansible.posix.mount:
-        path: /mnt
-        src: /dev/sda
-        opts: noatime
-        state: mounted
-        fstype: ext4
-
     - name: Install The Packages
       ansible.builtin.apt:
         update_cache: true

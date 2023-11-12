@@ -21,7 +21,7 @@ services:
       - "owner=proxy"
     volumes:
       - /opt/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
-      - /mnt/haproxy.pem:/haproxy.pem
+      - /root/haproxy.pem:/haproxy.pem # scp haproxy.pem root@hsnipe.moe:~
     networks:
       - proxy
       - default

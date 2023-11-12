@@ -24,18 +24,7 @@
         state: present
       register: sshkey_result
 
-    - name: Create Volume
-      community.digitalocean.digital_ocean_block_storage:
-        state: present
-        oauth_token: "{{ oauth_token }}"
-        command: create
-        region: fra1
-        block_size: 1
-        volume_name: rapture-block-storage
-        project_name: rapture
-      register: volume_result
-
-    - name: Create Droplet
+    - name: Create Droplets
       community.digitalocean.digital_ocean_droplet:
         state: present
         oauth_token: "{{ oauth_token }}"
@@ -49,17 +38,7 @@
         - digitalocean
       register: droplet_result
 
-    - name: Attach Volume to Droplet
-      community.digitalocean.digital_ocean_block_storage:
-        state: present
-        oauth_token: "{{ oauth_token }}"
-        command: attach
-        volume_name: rapture-block-storage
-        region: fra1
-        droplet_id: "{{ item.data.droplet.id }}"
-      with_items: "{{ droplet_result.results }}"
-
-    - name: Create Domain
+    - name: Create Domains
       community.digitalocean.digital_ocean_domain:
         state: present
         oauth_token: "{{ oauth_token }}"
