@@ -1,7 +1,7 @@
 ---
 digitalocean:
   hosts:
-    rapturev3.example.com:
+    node1.example.com:
   vars:
     ansible_user: root
     ansible_ssh_private_key_file: ~/.ssh/github

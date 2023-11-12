@@ -12,7 +12,7 @@
 
     - name: Simpler Copy
       ansible.builtin.copy:
-        src: config_files/
+        src: node1/
         dest: /opt
         mode: '0644'
 
