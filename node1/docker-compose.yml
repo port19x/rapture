@@ -1,20 +1,36 @@
 # https://docs.docker.com/compose/compose-file/compose-file-v3
 version: '3'
 
+networks:
+  default:
+    internal: true
+  proxy:
+    internal: false
+
+x-monitoring_defaults: &monitoring_defaults
+  restart: always
+  labels:
+    - "owner=monitoring"
+
 services:
   haproxy:
     image: haproxytech/haproxy-alpine:2.8.2
     restart: always
     container_name: haproxy
+    labels:
+      - "owner=proxy"
     volumes:
       - /opt/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
       - /root/haproxy.pem:/haproxy.pem # scp haproxy.pem root@hsnipe.moe:~
+    networks:
+      - proxy
+      - default
     ports:
       - 80:80
       - 443:443
 
   grafana:
-    restart: always
+    << : *monitoring_defaults
     image: grafana/grafana:10.1.0
     container_name: grafana
     volumes:
@@ -24,14 +40,14 @@ services:
       - /opt/grafana-dashboard.json:/etc/grafana/provisioning/dashboards/dashboard.json
 
   prometheus:
-    restart: always
+    << : *monitoring_defaults
     image: prom/prometheus:v2.46.0
     container_name: prometheus
     volumes:
       - /opt/prometheus.yml:/etc/prometheus/prometheus.yml
 
   cadvisor:
-    restart: always
+    << : *monitoring_defaults
     image: gcr.io/cadvisor/cadvisor:v0.47.2
     container_name: cadvisor
     command:
@@ -45,7 +61,7 @@ services:
       - /var/lib/docker/:/var/lib/docker:ro
 
   node-exporter:
-    restart: always
+    << : *monitoring_defaults
     image: prom/node-exporter:v1.6.1
     container_name: node-exporter
     command:
