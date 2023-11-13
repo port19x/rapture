@@ -12,6 +12,11 @@ x-monitoring_defaults: &monitoring_defaults
   labels:
     - "owner=monitoring"
 
+x-application_defaults: &application_defaults
+  restart: on-failure
+  labels:
+    - "owner=applications"
+
 services:
   haproxy:
     image: haproxytech/haproxy-alpine:2.8.2
@@ -75,3 +80,35 @@ services:
       - /sys:/host/sys:ro
       - /:/rootfs:ro
       - /:/host:ro,rslave
+
+  gitea:
+    << : *application_defaults
+    image: gitea/gitea:1.20.2
+    container_name: gitea
+    volumes:
+      - /mnt/gitea:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+
+  nginx:
+    << : *application_defaults
+    image: nginx:1.25.2-alpine
+    container_name: nginx
+    volumes:
+      - /mnt/port19.xyz:/usr/share/nginx/html:ro
+
+  kavita:
+    << : *application_defaults
+    image: kizaing/kavita:0.7.8
+    container_name: kavita
+    volumes:
+      - /mnt/books:/manga
+      - /mnt/kavita:/kavita/config
+
+  jitsi:
+    << : *application_defaults
+    image: jitsi/web:stable-8960
+    container_name: jitsi
+    environment:
+      - ENABLE_AUTH=0
+      - DISABLE_HTTPS=1
