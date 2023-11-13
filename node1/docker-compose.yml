@@ -86,24 +86,17 @@ services:
     image: gitea/gitea:1.20.2
     container_name: gitea
     volumes:
-      - /mnt/gitea:/data
+      - /root/gitea:/data
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
-
-  nginx:
-    << : *application_defaults
-    image: nginx:1.25.2-alpine
-    container_name: nginx
-    volumes:
-      - /mnt/port19.xyz:/usr/share/nginx/html:ro
 
   kavita:
     << : *application_defaults
     image: kizaing/kavita:0.7.8
     container_name: kavita
     volumes:
-      - /mnt/books:/manga
-      - /mnt/kavita:/kavita/config
+      - /root/books:/manga
+      - /root/kavita:/kavita/config
 
   jitsi:
     << : *application_defaults
