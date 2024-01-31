@@ -98,10 +98,11 @@ services:
       - /root/books:/manga
       - /root/kavita:/kavita/config
 
-  jitsi:
+  syncplay:
     << : *application_defaults
-    image: jitsi/web:stable-8960
-    container_name: jitsi
-    environment:
-      - ENABLE_AUTH=0
-      - DISABLE_HTTPS=1
+    image: dnomd343/syncplay:v1.7.1
+    container_name: syncplay
+    networks:
+      - proxy
+    ports:
+      - 8999:8999
