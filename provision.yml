@@ -13,7 +13,7 @@
   hosts: localhost
   vars:
     oauth_token: "{{ lookup('ansible.builtin.file', '.digital-ocean-token') }}"
-    domain: hsnipe.moe
+    domain: ansible.how
   tasks:
 
     - name: Register SSH Public Key
