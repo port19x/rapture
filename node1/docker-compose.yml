@@ -106,3 +106,29 @@ services:
       - proxy
     ports:
       - 8999:8999
+
+  rallly_db:
+    << : *application_defaults
+    image: postgres:14.2
+    volumes:
+      - /root/rally-db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  rallly:
+    << : *application_defaults
+    image: lukevella/rallly:latest
+    depends_on:
+      - rallly_db
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@rallly_db:5432/db
+      - NEXT_PUBLIC_BASE_URL=https://jitsi.ansible.how
+      - SECRET_PASSWORD=fuckyouialreayhavetlsontheproxy
+    #env_file:
+    #  - rallyconfig.env
