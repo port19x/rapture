@@ -90,6 +90,13 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
 
+  nginx:
+    << : *application_defaults
+    image: nginx:1.25.2-alpine
+    container_name: nginx
+    volumes:
+      - /root/port19.xyz:/usr/share/nginx/html:ro
+
   syncplay:
     << : *application_defaults
     image: dnomd343/syncplay:v1.7.1
