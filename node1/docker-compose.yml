@@ -107,8 +107,3 @@ services:
       - proxy
     volumes:
       - /root/secret.py:/secret.py
-
-  foxproxy:
-    <<: *application_defaults
-    image: ghcr.io/port19x/foxproxy:master
-    container_name: foxproxy

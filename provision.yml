@@ -56,7 +56,6 @@
         data: "{{ domain }}"
         type: CNAME
       with_items:
-        - fox
         - git
         - status
         - sync
