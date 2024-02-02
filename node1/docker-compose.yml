@@ -90,14 +90,6 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
 
-  kavita:
-    << : *application_defaults
-    image: kizaing/kavita:0.7.8
-    container_name: kavita
-    volumes:
-      - /root/books:/manga
-      - /root/kavita:/kavita/config
-
   syncplay:
     << : *application_defaults
     image: dnomd343/syncplay:v1.7.1
@@ -106,3 +98,17 @@ services:
       - proxy
     ports:
       - 8999:8999
+
+  redqu:
+    <<: *application_defaults
+    image: ghcr.io/port19x/redqu:master
+    container_name: redqu
+    networks:
+      - proxy
+    volumes:
+      - /root/secret.py:/secret.py
+
+  foxproxy:
+    <<: *application_defaults
+    image: ghcr.io/port19x/foxproxy:master
+    container_name: foxproxy
