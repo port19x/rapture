@@ -33,6 +33,7 @@ services:
     ports:
       - 80:80
       - 443:443
+      - 8999:8999
 
   grafana:
     << : *monitoring_defaults
@@ -101,10 +102,6 @@ services:
     << : *application_defaults
     image: dnomd343/syncplay:v1.7.1
     container_name: syncplay
-    networks:
-      - proxy
-    ports:
-      - 8999:8999
 
   redqu:
     <<: *application_defaults
